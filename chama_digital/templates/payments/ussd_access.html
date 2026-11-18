@@ -1,0 +1,51 @@
+{% extends 'base.html' %}
+
+{% block title %}Offline USSD Access ({{ ussd_code }}) — Chama Digital{% endblock %}
+
+{% block content %}
+<main class="section-pad">
+  <div class="container">
+    <div class="row g-5 align-items-center">
+      <div class="col-lg-6">
+        <span class="section-kicker">Inclusive Financial Access</span>
+        <h1 class="section-title mb-3">Access Chama Digital Without Internet</h1>
+        <p class="text-chama-muted mb-4">
+          Members without smartphones or mobile data will be able to access essential Chama Digital services by dialing <strong class="mono-figure text-chama-green">{{ ussd_code }}</strong> on any mobile phone.
+        </p>
+
+        <div class="approval-notice small mb-4">
+          <strong>Backend Integration Ready (Not Yet Live with Telecom):</strong> Live USSD requires connecting a third-party telecom aggregator (such as Africa's Talking or Safaricom USSD) to our Django callback endpoint at <code class="mono-figure">/payments/ussd/callback/</code>.
+        </div>
+
+        <ul class="list-unstyled d-grid gap-2 small fw-medium text-chama-ink">
+          <li>1. Check personal savings balance without mobile data</li>
+          <li>2. View current outstanding loan balance and next due date</li>
+          <li>3. Initiate M-Pesa STK contribution prompts via telecom menu</li>
+          <li>4. Confirm latest payment status and upcoming meeting date</li>
+        </ul>
+      </div>
+
+      <div class="col-lg-6">
+        <div class="ussd-terminal">
+          <div class="d-flex justify-content-between align-items-center mb-3">
+            <div>
+              <div class="small opacity-75">USSD Menu Visual Mockup</div>
+              <div class="ussd-code-display">{{ ussd_code }}</div>
+            </div>
+            <span class="small opacity-75">Telecom Spec</span>
+          </div>
+
+          <div class="ussd-screen-box">CHAMA DIGITAL
+
+1. My Savings
+2. Loan Balance
+3. Make Contribution
+4. Payment Status
+5. Meeting Information
+6. Exit</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>
+{% endblock %}

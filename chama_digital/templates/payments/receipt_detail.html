@@ -1,0 +1,59 @@
+{% extends 'dashboard_base.html' %}
+{% load humanize %}
+
+{% block title %}Receipt {{ receipt.receipt_number }} — Chama Digital{% endblock %}
+
+{% block dashboard_content %}
+<div class="d-flex flex-wrap justify-content-between align-items-center gap-3 pb-4 mb-4 border-bottom no-print">
+  <div>
+    <div class="small text-chama-muted mb-1">Official Chama Receipt</div>
+    <h1 class="h3 fw-bold mb-0 mono-figure">{{ receipt.receipt_number }}</h1>
+  </div>
+  <div class="d-flex gap-2">
+    <a href="{% url 'payments:receipt_pdf' receipt.pk %}" class="btn btn-chama-gold btn-chama-sm">Download PDF Receipt</a>
+    <a href="{% url 'payments:payment_history' %}" class="btn btn-chama-outline btn-chama-sm">Back to History</a>
+  </div>
+</div>
+
+<div class="row justify-content-center">
+  <div class="col-lg-8">
+    <div class="chama-card p-4 p-md-5">
+      <div class="receipt-sheet">
+        <div class="d-flex justify-content-between align-items-start gap-3 mb-2">
+          <div>
+            <div class="fw-bold fs-5 text-chama-green">Chama Digital Official Receipt</div>
+            <div class="small text-chama-muted">{{ tx.chama.name }} (Code: {{ tx.chama.invite_code }})</div>
+          </div>
+          <span class="status-label status-paid">{{ tx.get_status_display }}</span>
+        </div>
+
+        <div class="receipt-divider"></div>
+
+        <div class="d-grid gap-2 small">
+          <div class="d-flex justify-content-between"><span class="text-chama-muted">Receipt Number</span><strong class="mono-figure">{{ receipt.receipt_number }}</strong></div>
+          <div class="d-flex justify-content-between"><span class="text-chama-muted">Member Name</span><strong>{{ tx.member.full_name }}</strong></div>
+          <div class="d-flex justify-content-between"><span class="text-chama-muted">Membership Number</span><strong class="mono-figure">{{ tx.member.member_number }}</strong></div>
+          <div class="d-flex justify-content-between"><span class="text-chama-muted">Contribution Month</span><strong>{{ tx.contribution_month_label }}</strong></div>
+          <div class="d-flex justify-content-between"><span class="text-chama-muted">Payment Method</span><strong>{{ tx.get_payment_method_display }}</strong></div>
+          <div class="d-flex justify-content-between"><span class="text-chama-muted">Payment Type</span><strong>{{ tx.get_payment_type_display }}</strong></div>
+          <div class="d-flex justify-content-between"><span class="text-chama-muted">Transaction Reference</span><strong class="mono-figure">{{ tx.external_reference }}</strong></div>
+          <div class="d-flex justify-content-between"><span class="text-chama-muted">Payment Date</span><strong class="mono-figure">{{ tx.created_at|date:"d M Y, H:i" }} EAT</strong></div>
+        </div>
+
+        <div class="receipt-divider"></div>
+
+        <div class="d-flex justify-content-between align-items-center mb-2">
+          <span class="fw-semibold">Total Paid</span>
+          <span class="mono-figure fw-bold fs-4 text-chama-green">KES {{ tx.amount|floatformat:2|intcomma }}</span>
+        </div>
+
+        <div class="small text-chama-muted">
+          {% if tx.is_simulated %}Simulated Development Receipt &middot; {% endif %}
+          Email notice: {% if receipt.email_sent %}Queued{% else %}Off{% endif %} &middot;
+          SMS notice: {% if receipt.sms_sent %}Queued{% else %}Off{% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

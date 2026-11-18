@@ -1,0 +1,74 @@
+{% extends 'dashboard_base.html' %}
+{% load humanize %}
+
+{% block title %}Payment History &amp; Receipts — Chama Digital{% endblock %}
+
+{% block dashboard_content %}
+<div class="d-flex flex-wrap justify-content-between align-items-center gap-3 pb-4 mb-4 border-bottom">
+  <div>
+    <div class="small text-chama-muted mb-1">Personal Transaction Ledger &middot; Printable &amp; PDF Receipts</div>
+    <h1 class="h3 fw-bold mb-0">Payment History &amp; Receipts</h1>
+  </div>
+
+  <form method="get" class="d-flex align-items-center gap-2">
+    <label class="small text-chama-muted" for="statusFilter">Filter:</label>
+    <select name="status" id="statusFilter" class="form-select form-select-sm" style="width: auto; min-height: 36px;">
+      <option value="ALL" {% if status_filter == 'ALL' %}selected{% endif %}>All Statuses</option>
+      {% for val, label in status_choices %}
+        <option value="{{ val }}" {% if status_filter == val %}selected{% endif %}>{{ label }}</option>
+      {% endfor %}
+    </select>
+    <button type="submit" class="btn btn-chama-outline btn-chama-sm">Apply</button>
+  </form>
+</div>
+
+<article class="chama-card overflow-hidden">
+  <div class="table-responsive">
+    <table class="table table-hover table-chama align-middle">
+      <thead>
+        <tr>
+          <th>Date</th>
+          <th>Month</th>
+          <th>Purpose</th>
+          <th>Method</th>
+          <th>Reference</th>
+          <th>Status</th>
+          <th class="text-end">Amount</th>
+          <th class="text-end">Receipt</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for tx in transactions %}
+          <tr>
+            <td class="mono-figure">{{ tx.created_at|date:"d M Y, H:i" }}</td>
+            <td>{{ tx.contribution_month_label }}</td>
+            <td>{{ tx.get_payment_type_display }}</td>
+            <td>{{ tx.get_payment_method_display }}</td>
+            <td class="mono-figure">{{ tx.external_reference }}</td>
+            <td>
+              {% if tx.status == 'SUCCESSFUL' %}
+                <span class="status-label status-paid">{{ tx.get_status_display }}</span>
+              {% elif tx.status == 'PENDING_VERIFICATION' %}
+                <span class="status-label status-pending">{{ tx.get_status_display }}</span>
+              {% else %}
+                <span class="status-label status-overdue">{{ tx.get_status_display }}</span>
+              {% endif %}
+            </td>
+            <td class="text-end mono-figure">KES {{ tx.amount|floatformat:2|intcomma }}</td>
+            <td class="text-end">
+              {% if tx.receipt %}
+                <a href="{% url 'payments:receipt_detail' tx.receipt.pk %}" class="btn btn-chama-outline btn-chama-sm">View</a>
+                <a href="{% url 'payments:receipt_pdf' tx.receipt.pk %}" class="btn btn-chama-gold btn-chama-sm">PDF</a>
+              {% else %}
+                <span class="small text-chama-muted">Pending</span>
+              {% endif %}
+            </td>
+          </tr>
+        {% empty %}
+          <tr><td colspan="8" class="text-center py-4 text-chama-muted">No matching payment records found.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</article>
+{% endblock %}

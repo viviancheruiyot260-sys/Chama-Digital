@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Chama Digital — Together We Save. Together We Grow.</title>
+  <meta name="description" content="Chama Digital simplifies table banking, group savings, contributions, loans, receipts, and USSD access for Kenyan chamas.">
+  <meta property="og:title" content="Chama Digital — Together We Save. Together We Grow.">
+  <meta property="og:description" content="A modern table-banking management platform for Kenyan savings groups, treasurers, chairpersons, secretaries, and members.">
+  <meta property="og:type" content="website">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@500;600&family=Plus+Jakarta+Sans:wght@600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/bootstrap.min.css">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <header class="sticky-top navbar-chama">
+    <nav class="navbar navbar-expand-lg py-2" aria-label="Primary navigation">
+      <div class="container">
+        <a class="navbar-brand navbar-brand-chama d-inline-flex align-items-center gap-2" href="index.html">
+          <svg width="30" height="30" viewBox="0 0 32 32" fill="none" aria-hidden="true">
+            <rect width="32" height="32" rx="8" fill="#14532D"/>
+            <circle cx="13.5" cy="16" r="6" stroke="#C59B27" stroke-width="2.5"/>
+            <circle cx="19.5" cy="16" r="6" stroke="#FFFFFF" stroke-width="2.5"/>
+          </svg>
+          <span>Chama Digital</span>
+        </a>
+
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNavbar" aria-controls="mainNavbar" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="mainNavbar">
+          <ul class="navbar-nav mx-auto mb-2 mb-lg-0 gap-lg-2">
+            <li class="nav-item"><a class="nav-link active" href="index.html">Home</a></li>
+            <li class="nav-item"><a class="nav-link" href="#about">About Us</a></li>
+            <li class="nav-item"><a class="nav-link" href="#how-it-works">How It Works</a></li>
+            <li class="nav-item"><a class="nav-link" href="#contact">Contact</a></li>
+            <li class="nav-item"><a class="nav-link" href="login.html">Login</a></li>
+          </ul>
+
+          <div class="d-flex align-items-center gap-2 pt-2 pt-lg-0" id="navAuthActions">
+            <a href="login.html" class="btn btn-link text-decoration-none fw-semibold text-chama-green px-3">Member Login</a>
+            <a href="register.html" class="btn btn-chama-primary btn-chama-sm">Join Our Chama</a>
+          </div>
+        </div>
+      </div>
+    </nav>
+  </header>
+
+  <main>
+    <!-- Hero Section -->
+    <section class="section-pad">
+      <div class="container">
+        <div class="row align-items-center g-5">
+          <div class="col-lg-6">
+            <span class="section-kicker">Kenyan Table Banking &amp; Group Savings</span>
+            <h1 class="hero-title mb-3">Together We Save. Together We Grow.</h1>
+            <p class="fs-5 text-chama-muted mb-4">
+              Chama Digital brings everyday table-banking trust into a clear digital ledger. Simplify monthly contributions, member savings, group loans, chairperson approvals, and financial reports for every member.
+            </p>
+
+            <div class="d-flex flex-wrap gap-3 mb-4">
+              <a href="register.html" class="btn btn-chama-primary">Join Our Chama</a>
+              <a href="login.html" class="btn btn-chama-gold">Member Login</a>
+            </div>
+
+            <div class="pt-3 border-top d-flex flex-wrap align-items-center gap-2 small text-chama-muted">
+              <span>Role-Based Portals</span>
+              <span aria-hidden="true">&middot;</span>
+              <span>M-Pesa STK &amp; USSD Ready</span>
+              <span aria-hidden="true">&middot;</span>
+              <span>Chairperson Member Approvals</span>
+            </div>
+          </div>
+
+          <div class="col-lg-6">
+            <div class="chama-card overflow-hidden">
+              <div class="hero-photo-wrap">
+                <img src="images/hero-table-banking.jpg" alt="Kenyan women and men seated around a wooden table during a community table-banking meeting, contributing Kenyan Shillings, discussing finances, and recording savings in a ledger book">
+              </div>
+              <div class="row g-0 border-top bg-white">
+                <div class="col-sm-4 p-3 border-end">
+                  <span class="d-block small text-chama-muted mb-1">Sample Group Pool</span>
+                  <span class="mono-figure fw-semibold fs-6 text-chama-green">KES 2,054,950</span>
+                </div>
+                <div class="col-sm-4 p-3 border-end">
+                  <span class="d-block small text-chama-muted mb-1">Monthly Target</span>
+                  <span class="mono-figure fw-semibold fs-6 text-chama-ink">KES 12,500</span>
+                </div>
+                <div class="col-sm-4 p-3">
+                  <span class="d-block small text-chama-muted mb-1">Offline USSD</span>
+                  <span class="mono-figure fw-semibold fs-6 text-chama-gold">*384*240#</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- About Us Section -->
+    <section id="about" class="section-pad section-surface">
+      <div class="container">
+        <div class="row g-5 align-items-center">
+          <div class="col-lg-6">
+            <span class="section-kicker">About Us</span>
+            <h2 class="section-title mb-3">Built around community trust, transparent books, and shared prosperity</h2>
+            <p class="text-chama-muted mb-4">
+              For generations, Kenyan chamas and table-banking groups have helped families build businesses, pay school fees, and invest together. Chama Digital preserves that community spirit while removing lost exercise books, unverified receipts, and manual arithmetic errors.
+            </p>
+
+            <div class="row g-3">
+              <div class="col-sm-6">
+                <div class="p-3 rounded-3 border bg-light h-100">
+                  <div class="fw-bold small mb-1 text-chama-green">Chairperson Oversight</div>
+                  <p class="small text-chama-muted mb-0">New members wait for Chairperson approval before accessing financial records.</p>
+                </div>
+              </div>
+              <div class="col-sm-6">
+                <div class="p-3 rounded-3 border bg-light h-100">
+                  <div class="fw-bold small mb-1 text-chama-green">Treasurer &amp; Secretary Tools</div>
+                  <p class="small text-chama-muted mb-0">Dedicated dashboards for cashbooks, loans, directories, meetings, and notices.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-lg-6">
+            <div class="chama-card p-4">
+              <div class="row align-items-center g-4">
+                <div class="col-sm-6">
+                  <div class="feature-photo-wrap">
+                    <img src="images/feature-mobile-savings.jpg" alt="Smartphone beside a clean financial ledger notebook on an oak desk">
+                  </div>
+                </div>
+                <div class="col-sm-6">
+                  <div class="mono-figure small text-chama-gold fw-semibold mb-2">Clear Accountability</div>
+                  <h3 class="h5 fw-bold mb-2">Every contribution tracked with receipts</h3>
+                  <p class="small text-chama-muted mb-3">
+                    Members select their contribution month, enter their M-Pesa phone number, and receive printable receipts with Email and SMS confirmation previews.
+                  </p>
+                  <a href="register.html" class="small fw-semibold text-decoration-none text-chama-green">Explore Member &amp; Official Sign-up &rarr;</a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- How It Works Section -->
+    <section id="how-it-works" class="section-pad">
+      <div class="container">
+        <div class="mb-5" style="max-width: 680px;">
+          <span class="section-kicker">How It Works</span>
+          <h2 class="section-title mb-3">From registration to verified monthly savings in four steps</h2>
+          <p class="text-chama-muted mb-0">
+            Simple enough for first-time smartphone users, structured enough for group officials.
+          </p>
+        </div>
+
+        <div class="row g-4">
+          <div class="col-sm-6 col-lg-3">
+            <article class="chama-card p-4 h-100">
+              <span class="step-badge-num mb-3">01</span>
+              <h3 class="h6 fw-bold mb-2">Choose Registration Path</h3>
+              <p class="small text-chama-muted mb-0">
+                Register as a Chama Official (Chairperson, Treasurer, or Secretary) or apply as a Member with your National ID and invite code.
+              </p>
+            </article>
+          </div>
+
+          <div class="col-sm-6 col-lg-3">
+            <article class="chama-card p-4 h-100">
+              <span class="step-badge-num mb-3">02</span>
+              <h3 class="h6 fw-bold mb-2">Chairperson Approval</h3>
+              <p class="small text-chama-muted mb-0">
+                New member accounts enter Pending Approval until the Chairperson reviews and activates their membership.
+              </p>
+            </article>
+          </div>
+
+          <div class="col-sm-6 col-lg-3">
+            <article class="chama-card p-4 h-100">
+              <span class="step-badge-num mb-3">03</span>
+              <h3 class="h6 fw-bold mb-2">Contribute &amp; Track Loans</h3>
+              <p class="small text-chama-muted mb-0">
+                Pick a contribution month, pay via M-Pesa STK Push or USSD, update your savings balance, and manage group loans.
+              </p>
+            </article>
+          </div>
+
+          <div class="col-sm-6 col-lg-3">
+            <article class="chama-card p-4 h-100">
+              <span class="step-badge-num mb-3">04</span>
+              <h3 class="h6 fw-bold mb-2">Receipts &amp; Offline USSD</h3>
+              <p class="small text-chama-muted mb-0">
+                Download or print official receipts anytime, or dial *384*240# when mobile data is unavailable.
+              </p>
+            </article>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- USSD Offline Access Interactive Section -->
+    <section id="ussd" class="section-pad section-surface">
+      <div class="container">
+        <div class="row g-5 align-items-center">
+          <div class="col-lg-6">
+            <span class="section-kicker">Inclusive Financial Access</span>
+            <h2 class="section-title mb-3">Access Chama Digital Without Internet</h2>
+            <p class="text-chama-muted mb-4">
+              Not every chama member always has mobile data or a smartphone. Members can dial our USSD shortcode <strong class="mono-figure text-chama-green">*384*240#</strong> from any phone to:
+            </p>
+
+            <ul class="list-unstyled d-grid gap-2 small fw-medium text-chama-ink mb-4">
+              <li>01. Check personal savings balance and monthly target</li>
+              <li>02. Check outstanding loan balance and next repayment date</li>
+              <li>03. View contribution status and make M-Pesa contributions</li>
+              <li>04. Review recent payment history and repayment dates</li>
+            </ul>
+
+            <div class="approval-notice small">
+              <strong>Frontend Demonstration Notice:</strong> This interactive USSD simulator reads from browser prototype data. Production USSD sessions will connect to a telecom USSD aggregator and Django backend.
+            </div>
+          </div>
+
+          <div class="col-lg-6">
+            <div class="ussd-terminal" id="ussdSimulatorHome">
+              <div class="d-flex justify-content-between align-items-center mb-3">
+                <div>
+                  <div class="small opacity-75">USSD Session Preview</div>
+                  <div class="ussd-code-display">*384*240#</div>
+                </div>
+                <button type="button" class="btn btn-sm btn-outline-light" data-ussd-reset>Reset Menu</button>
+              </div>
+
+              <div class="ussd-screen-box mb-3" data-ussd-screen aria-live="polite"></div>
+
+              <div class="d-flex flex-wrap gap-2 mb-3">
+                <button type="button" class="btn btn-sm btn-chama-gold" data-ussd-choice="1">1. Check Savings</button>
+                <button type="button" class="btn btn-sm btn-outline-light" data-ussd-choice="2">2. Loan Balance</button>
+                <button type="button" class="btn btn-sm btn-outline-light" data-ussd-choice="3">3. Contribute</button>
+                <button type="button" class="btn btn-sm btn-outline-light" data-ussd-choice="4">4. History</button>
+                <button type="button" class="btn btn-sm btn-outline-light" data-ussd-choice="5">5. Exit</button>
+                <button type="button" class="btn btn-sm btn-outline-light" data-ussd-choice="0">0. Main Menu</button>
+              </div>
+
+              <div class="input-group input-group-sm">
+                <label class="visually-hidden" for="ussdInputHome">Enter USSD option</label>
+                <input type="text" id="ussdInputHome" class="form-control bg-white text-dark" placeholder="Type option (1-5 or 0)" data-ussd-input>
+                <button type="button" class="btn btn-chama-gold" data-ussd-send>Send</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contact" class="section-pad">
+      <div class="container">
+        <div class="row g-5 align-items-start">
+          <div class="col-lg-5">
+            <span class="section-kicker">Contact</span>
+            <h2 class="section-title mb-3">Ready to bring your chama online?</h2>
+            <p class="text-chama-muted mb-4">
+              Reach out for table-banking onboarding support or try the prototype dashboards immediately using Member Login.
+            </p>
+
+            <div class="mb-3">
+              <div class="small text-chama-muted">Email Support</div>
+              <div class="fw-semibold">hello@chamadigital.co.ke</div>
+            </div>
+            <div class="mb-3">
+              <div class="small text-chama-muted">Phone &amp; USSD Desk</div>
+              <div class="fw-semibold mono-figure">+254 700 412 890</div>
+            </div>
+            <div>
+              <div class="small text-chama-muted">Location</div>
+              <div class="fw-semibold">Nairobi, Kenya</div>
+            </div>
+          </div>
+
+          <div class="col-lg-7">
+            <div class="chama-card p-4 p-md-5">
+              <div id="contactFormAlert" class="d-none" role="status"></div>
+              <form id="homeContactForm">
+                <div class="row g-3 mb-3">
+                  <div class="col-md-6">
+                    <label class="form-label" for="contact-name">Full Name</label>
+                    <input class="form-control" type="text" id="contact-name" placeholder="e.g. Faith Njeri" required>
+                  </div>
+                  <div class="col-md-6">
+                    <label class="form-label" for="contact-phone">Phone Number</label>
+                    <input class="form-control" type="tel" id="contact-phone" placeholder="+254 712 345 678" required>
+                  </div>
+                </div>
+
+                <div class="mb-3">
+                  <label class="form-label" for="contact-group">Chama Name</label>
+                  <input class="form-control" type="text" id="contact-group" placeholder="e.g. Umoja Table Banking Chama">
+                </div>
+
+                <div class="mb-4">
+                  <label class="form-label" for="contact-message">Message</label>
+                  <textarea class="form-control" id="contact-message" rows="3" placeholder="How can we support your savings group?" required></textarea>
+                </div>
+
+                <button type="submit" class="btn btn-chama-primary">Send Message</button>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer py-5">
+    <div class="container">
+      <div class="row g-4 pb-4 border-bottom border-light border-opacity-25">
+        <div class="col-lg-4">
+          <a class="d-inline-flex align-items-center gap-2 text-white fw-bold fs-5 mb-3" href="index.html">
+            <svg width="28" height="28" viewBox="0 0 32 32" fill="none" aria-hidden="true">
+              <rect width="32" height="32" rx="8" fill="#C59B27"/>
+              <circle cx="13.5" cy="16" r="6" stroke="#14532D" stroke-width="2.5"/>
+              <circle cx="19.5" cy="16" r="6" stroke="#FFFFFF" stroke-width="2.5"/>
+            </svg>
+            <span>Chama Digital</span>
+          </a>
+          <p class="small opacity-75 mb-0" style="max-width: 34ch;">
+            Together We Save. Together We Grow. A modern table-banking platform built for Kenyan chamas.
+          </p>
+        </div>
+
+        <div class="col-6 col-lg-2">
+          <h3 class="h6 text-white fw-semibold mb-3">Navigation</h3>
+          <ul class="list-unstyled d-grid gap-2 small">
+            <li><a href="index.html">Home</a></li>
+            <li><a href="#about">About Us</a></li>
+            <li><a href="#how-it-works">How It Works</a></li>
+            <li><a href="#contact">Contact</a></li>
+          </ul>
+        </div>
+
+        <div class="col-6 col-lg-3">
+          <h3 class="h6 text-white fw-semibold mb-3">Accounts</h3>
+          <ul class="list-unstyled d-grid gap-2 small">
+            <li><a href="register.html">Join Our Chama</a></li>
+            <li><a href="login.html">Member &amp; Official Login</a></li>
+            <li><a href="pending-approval.html">Approval Status</a></li>
+          </ul>
+        </div>
+
+        <div class="col-lg-3">
+          <h3 class="h6 text-white fw-semibold mb-3">Prototype Integration</h3>
+          <p class="small opacity-75 mb-0">
+            Frontend prototype powered by vanilla JS &amp; localStorage, structured for future Django, M-Pesa Daraja, SMS &amp; Email APIs.
+          </p>
+        </div>
+      </div>
+
+      <div class="pt-4 d-flex flex-wrap justify-content-between gap-2 small opacity-75">
+        <span>&copy; 2026 Chama Digital. All sample balances shown in Kenyan Shillings (KES).</span>
+        <span>Frontend Prototype</span>
+      </div>
+    </div>
+  </footer>
+
+  <script src="js/bootstrap.bundle.min.js"></script>
+  <script src="js/store.js"></script>
+  <script src="js/app.js"></script>
+  <script src="js/ussd.js"></script>
+  <script>
+    document.getElementById('homeContactForm').addEventListener('submit', function (e) {
+      e.preventDefault();
+      var box = document.getElementById('contactFormAlert');
+      box.className = 'alert alert-success small mb-3';
+      box.textContent = 'Inquiry recorded in this frontend prototype. Connect a Django backend email endpoint to send live notifications.';
+      this.reset();
+    });
+  </script>
+</body>
+</html>

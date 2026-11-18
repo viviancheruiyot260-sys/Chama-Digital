@@ -1,0 +1,73 @@
+{% extends 'dashboard_base.html' %}
+{% load static %}
+
+{% block title %}Fellow Chama Members — Chama Digital{% endblock %}
+
+{% block dashboard_content %}
+<div class="d-flex flex-wrap justify-content-between align-items-center gap-3 pb-4 mb-4 border-bottom">
+  <div>
+    <div class="small text-chama-muted mb-1">Same-Chama Directory &middot; Financial Privacy Enforced</div>
+    <h1 class="h3 fw-bold mb-0">{{ chama.name }} — Member Directory</h1>
+  </div>
+  <span class="small fw-semibold text-chama-green">{{ peers|length }} Active Member(s)</span>
+</div>
+
+<div class="approval-notice mb-4 d-flex flex-wrap justify-content-between align-items-center gap-3">
+  <div class="small" style="max-width: 65ch;">
+    <strong>Privacy Guarantee:</strong> You can view profiles of approved members in your chama. Personal savings balances, contribution histories, and loan records are never exposed to other members.
+  </div>
+  <form method="get" class="d-flex gap-2">
+    <input type="search" name="q" value="{{ query }}" class="form-control bg-white" placeholder="Search name, role, ID...">
+    <button type="submit" class="btn btn-chama-primary btn-chama-sm">Search</button>
+  </form>
+</div>
+
+<div class="row g-4">
+  {% for peer in peers %}
+    <div class="col-md-6 col-xl-4">
+      <article class="chama-card p-4 h-100 d-flex flex-column justify-content-between">
+        <div>
+          <div class="d-flex align-items-center gap-3 pb-3 mb-3 border-bottom">
+            {% if peer.profile_photo %}
+              <img src="{{ peer.profile_photo.url }}" alt="{{ peer.full_name }}" class="sidebar-avatar" style="width:56px;height:56px;">
+            {% else %}
+              <img src="{% static peer.default_avatar_path %}" alt="{{ peer.full_name }}" class="sidebar-avatar" style="width:56px;height:56px;">
+            {% endif %}
+            <div>
+              <h2 class="h6 fw-bold mb-1">{{ peer.full_name }}{% if peer.pk == user.pk %} (You){% endif %}</h2>
+              <div class="small text-chama-green fw-semibold">{{ peer.get_role_display }} &middot; <span class="mono-figure">{{ peer.member_number }}</span></div>
+            </div>
+          </div>
+
+          <p class="small text-chama-muted mb-3">{{ peer.bio|default:"Approved member of Umoja Table Banking Chama." }}</p>
+
+          <div class="d-grid gap-2 small mb-3">
+            <div class="d-flex justify-content-between">
+              <span class="text-chama-muted">Date Joined</span>
+              <span class="mono-figure">{{ peer.created_at|date:"d M Y" }}</span>
+            </div>
+            <div class="d-flex justify-content-between">
+              <span class="text-chama-muted">Phone</span>
+              {% if peer.show_phone_in_directory %}
+                <span class="mono-figure">{{ peer.phone_number }}</span>
+              {% else %}
+                <span class="text-chama-muted fst-italic">Hidden by member</span>
+              {% endif %}
+            </div>
+            <div class="d-flex justify-content-between">
+              <span class="text-chama-muted">Savings &amp; Loans</span>
+              <span class="text-chama-muted fst-italic">Private to member</span>
+            </div>
+          </div>
+        </div>
+
+        <a href="{% url 'members:public_profile' peer.pk %}" class="btn btn-chama-outline btn-chama-sm w-100">View Public Profile</a>
+      </article>
+    </div>
+  {% empty %}
+    <div class="col-12">
+      <div class="chama-card p-4 text-center text-chama-muted">No matching active members found in your chama.</div>
+    </div>
+  {% endfor %}
+</div>
+{% endblock %}

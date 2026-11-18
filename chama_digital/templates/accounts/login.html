@@ -1,0 +1,103 @@
+{% extends 'base.html' %}
+
+{% block title %}Login — Chama Digital{% endblock %}
+
+{% block content %}
+<main class="section-pad">
+  <div class="container">
+    <div class="row align-items-start g-5">
+      <div class="col-lg-6">
+        <span class="section-kicker">Role-Based Access</span>
+        <h1 class="section-title mb-3">Welcome back to Chama Digital</h1>
+        <p class="text-chama-muted fs-6 mb-4" style="max-width: 48ch;">
+          Sign in with your email address or Kenyan phone number. Members awaiting Chairperson approval are held on the verification screen until activated.
+        </p>
+
+        <div class="chama-card p-4">
+          <h2 class="h6 fw-bold mb-2">Seeded Test Accounts (Password: <code class="mono-figure">ChamaPass2026!</code>)</h2>
+          <p class="small text-chama-muted mb-3">
+            All accounts use Django PBKDF2 password hashing and strict server-side role permissions:
+          </p>
+          <div class="table-responsive">
+            <table class="table table-sm table-chama mb-0">
+              <thead>
+                <tr>
+                  <th>Role</th>
+                  <th>Email / Login</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><strong>Chairperson</strong></td>
+                  <td class="mono-figure">chairperson@chamadigital.co.ke</td>
+                  <td><span class="status-label status-paid">Active</span></td>
+                </tr>
+                <tr>
+                  <td><strong>Treasurer</strong></td>
+                  <td class="mono-figure">treasurer@chamadigital.co.ke</td>
+                  <td><span class="status-label status-paid">Active</span></td>
+                </tr>
+                <tr>
+                  <td><strong>Secretary</strong></td>
+                  <td class="mono-figure">secretary@chamadigital.co.ke</td>
+                  <td><span class="status-label status-paid">Active</span></td>
+                </tr>
+                <tr>
+                  <td><strong>Member (Amina)</strong></td>
+                  <td class="mono-figure">amina@chamadigital.co.ke</td>
+                  <td><span class="status-label status-paid">Active</span></td>
+                </tr>
+                <tr>
+                  <td><strong>Member (Faith)</strong></td>
+                  <td class="mono-figure">faith@chamadigital.co.ke</td>
+                  <td><span class="status-label status-pending">Pending Approval</span></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-lg-5 offset-lg-1">
+        <div class="chama-card p-4 p-md-5">
+          <div class="mb-4">
+            <h2 class="h4 fw-bold mb-1">Log in to your account</h2>
+            <p class="small text-chama-muted mb-0">Protected by Django authentication and CSRF validation.</p>
+          </div>
+
+          <form method="post" action="{% url 'accounts:login' %}">
+            {% csrf_token %}
+            <div class="mb-3">
+              <label class="form-label" for="{{ form.identifier.id_for_label }}">{{ form.identifier.label }}</label>
+              {{ form.identifier }}
+              {% if form.identifier.errors %}<div class="text-danger small mt-1">{{ form.identifier.errors|striptags }}</div>{% endif %}
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label" for="{{ form.password.id_for_label }}">{{ form.password.label }}</label>
+              {{ form.password }}
+              {% if form.password.errors %}<div class="text-danger small mt-1">{{ form.password.errors|striptags }}</div>{% endif %}
+            </div>
+
+            <div class="d-flex justify-content-between align-items-center mb-4 small">
+              <div class="form-check">
+                {{ form.remember_me }}
+                <label class="form-check-label text-chama-muted" for="{{ form.remember_me.id_for_label }}">Remember me</label>
+              </div>
+              <span class="text-chama-muted">Invite Code: <code class="mono-figure">UMJ-2026</code></span>
+            </div>
+
+            <button type="submit" class="btn btn-chama-primary w-100">Login to Dashboard</button>
+          </form>
+
+          <div class="mt-4 pt-3 border-top text-center small text-chama-muted">
+            New to Chama Digital?
+            <a href="{% url 'accounts:register' %}" class="fw-semibold text-decoration-none text-chama-green">Register as Member or Official</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>
+{% endblock %}

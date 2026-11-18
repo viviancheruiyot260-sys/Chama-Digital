@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Treasurer Dashboard — Chama Digital</title>
+  <meta name="description" content="Treasurer dashboard for managing group savings, monthly contributions, issued loans, outstanding payments, and financial reports.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@500;600&family=Plus+Jakarta+Sans:wght@600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/bootstrap.min.css">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body id="treasurerDashboard">
+  <header class="sticky-top navbar-chama">
+    <nav class="navbar navbar-expand-lg py-2" aria-label="Primary navigation">
+      <div class="container-fluid px-lg-4">
+        <div class="d-flex align-items-center gap-2">
+          <button type="button" class="btn btn-chama-outline btn-chama-sm" id="sidebarToggleBtn" aria-label="Toggle sidebar">Menu</button>
+          <a class="navbar-brand navbar-brand-chama d-inline-flex align-items-center gap-2" href="index.html">
+            <svg width="28" height="28" viewBox="0 0 32 32" fill="none" aria-hidden="true">
+              <rect width="32" height="32" rx="8" fill="#14532D"/>
+              <circle cx="13.5" cy="16" r="6" stroke="#C59B27" stroke-width="2.5"/>
+              <circle cx="19.5" cy="16" r="6" stroke="#FFFFFF" stroke-width="2.5"/>
+            </svg>
+            <span>Chama Digital</span>
+          </a>
+        </div>
+
+        <div class="d-flex align-items-center gap-2 ms-auto" id="navAuthActions">
+          <button type="button" class="btn btn-chama-outline btn-chama-sm" data-action="logout">Logout</button>
+        </div>
+      </div>
+    </nav>
+  </header>
+
+  <div class="dashboard-shell" id="dashboardShell">
+    <aside class="dashboard-sidebar" aria-label="Treasurer navigation">
+      <div>
+        <div class="pb-3 mb-3 border-bottom border-light border-opacity-25 px-2">
+          <div class="small opacity-75 mb-1">Treasurer Portal</div>
+          <div class="fw-bold text-white" id="sidebarChamaName">Umoja Table Banking Chama</div>
+        </div>
+
+        <nav class="sidebar-nav-list d-grid gap-1">
+          <a href="#treasurerOverview" class="sidebar-link is-active">Financial Overview</a>
+          <a href="#treasurerNotifications" class="sidebar-link">Payment Alerts</a>
+          <a href="#memberContributions" class="sidebar-link">Member Contributions</a>
+          <a href="#loanManagement" class="sidebar-link">Loans Management</a>
+          <a href="#recentTransactions" class="sidebar-link">Payment Transactions</a>
+          <a href="#financialReports" class="sidebar-link">Financial Reports</a>
+          <a href="index.html" class="sidebar-link">Public Homepage</a>
+        </nav>
+      </div>
+
+      <div class="pt-3 border-top border-light border-opacity-25 d-flex align-items-center gap-3 px-2">
+        <img id="sidebarAvatar" src="images/avatar-treasurer-david.jpg" alt="Treasurer portrait" class="sidebar-avatar">
+        <div>
+          <div class="small fw-semibold text-white" id="sidebarUserName">David Ochieng</div>
+          <div class="small opacity-75" id="sidebarUserRole">Treasurer</div>
+        </div>
+      </div>
+    </aside>
+
+    <main class="dashboard-main" id="treasurerOverview">
+      <div class="d-flex flex-wrap justify-content-between align-items-center gap-3 pb-4 mb-4 border-bottom">
+        <div>
+          <div class="small text-chama-muted mb-1">Treasurer Console &middot; Contributions, Loans &amp; Reports</div>
+          <h1 class="h3 fw-bold mb-0" id="welcomeHeading">Treasurer Console</h1>
+        </div>
+        <div class="d-flex gap-2">
+          <button type="button" class="btn btn-chama-primary btn-chama-sm" id="exportLedgerCsvBtn">Download Financial CSV</button>
+        </div>
+      </div>
+
+      <!-- 4 Financial Summary Cards -->
+      <div class="row g-3 mb-4">
+        <div class="col-sm-6 col-xl-3">
+          <article class="chama-card p-3 h-100">
+            <div class="small text-chama-muted mb-1">Total Group Savings</div>
+            <div class="kpi-value text-chama-green" id="treasurerTotalSavings">KES 0</div>
+          </article>
+        </div>
+        <div class="col-sm-6 col-xl-3">
+          <article class="chama-card p-3 h-100">
+            <div class="small text-chama-muted mb-1">Monthly Contributions (Nov)</div>
+            <div class="kpi-value" id="treasurerMonthlyContrib">KES 0</div>
+          </article>
+        </div>
+        <div class="col-sm-6 col-xl-3">
+          <article class="chama-card p-3 h-100">
+            <div class="small text-chama-muted mb-1">Total Loans Issued</div>
+            <div class="kpi-value" id="treasurerLoansIssued">KES 0</div>
+          </article>
+        </div>
+        <div class="col-sm-6 col-xl-3">
+          <article class="chama-card p-3 h-100">
+            <div class="small text-chama-muted mb-1">Total Outstanding Loans</div>
+            <div class="kpi-value text-chama-gold" id="treasurerOutstandingLoans">KES 0</div>
+          </article>
+        </div>
+      </div>
+
+      <!-- Live Treasurer Payment Notifications -->
+      <article class="chama-card mb-4 overflow-hidden" id="treasurerNotifications">
+        <div class="px-4 py-3 border-bottom d-flex flex-wrap justify-content-between align-items-center gap-2">
+          <div class="d-flex align-items-center gap-2">
+            <h2 class="h6 fw-bold mb-0">Payment Notifications (M-Pesa &amp; Bank)</h2>
+            <span class="status-label status-pending" id="treasurerUnreadCount">0 Unread</span>
+          </div>
+          <button type="button" class="btn btn-chama-outline btn-chama-sm" id="markNotificationsReadBtn">Mark All Read</button>
+        </div>
+        <ul class="list-group list-group-flush" id="treasurerNotificationsList"></ul>
+      </article>
+
+      <!-- Members With Outstanding Payments -->
+      <article class="chama-card mb-4 overflow-hidden" id="memberContributions">
+        <div class="px-4 py-3 border-bottom d-flex justify-content-between align-items-center">
+          <h2 class="h6 fw-bold mb-0">Members &amp; Monthly Contribution Status</h2>
+          <span class="small text-chama-muted">Live localStorage Sync</span>
+        </div>
+        <div class="table-responsive">
+          <table class="table table-hover table-chama align-middle">
+            <thead>
+              <tr>
+                <th>Member</th>
+                <th>Member No.</th>
+                <th>Nov Contribution</th>
+                <th class="text-end">Monthly Target</th>
+                <th class="text-end">Cumulative Savings</th>
+              </tr>
+            </thead>
+            <tbody id="treasurerMembersBody"></tbody>
+          </table>
+        </div>
+      </article>
+
+      <!-- Loans Management -->
+      <article class="chama-card mb-4 overflow-hidden" id="loanManagement">
+        <div class="px-4 py-3 border-bottom d-flex justify-content-between align-items-center">
+          <h2 class="h6 fw-bold mb-0">Group Loans Management</h2>
+          <span class="small text-chama-muted">Approve &amp; Track Balances</span>
+        </div>
+        <div class="table-responsive">
+          <table class="table table-hover table-chama align-middle">
+            <thead>
+              <tr>
+                <th>Loan ID</th>
+                <th>Member</th>
+                <th>Next Repayment</th>
+                <th>Status</th>
+                <th class="text-end">Principal</th>
+                <th class="text-end">Balance</th>
+                <th class="text-end">Action</th>
+              </tr>
+            </thead>
+            <tbody id="treasurerLoansBody"></tbody>
+          </table>
+        </div>
+      </article>
+
+      <!-- Recent Transactions & Financial Reports -->
+      <div class="row g-4">
+        <div class="col-lg-7">
+          <article class="chama-card h-100 overflow-hidden" id="recentTransactions">
+            <div class="px-4 py-3 border-bottom">
+              <h2 class="h6 fw-bold mb-0">Recent Payment Transactions</h2>
+            </div>
+            <div class="table-responsive">
+              <table class="table table-hover table-chama align-middle">
+                <thead>
+                  <tr>
+                    <th>Date</th>
+                    <th>Member</th>
+                    <th>Month</th>
+                    <th>Method</th>
+                    <th>Reference</th>
+                    <th>Status</th>
+                    <th class="text-end">Amount</th>
+                  </tr>
+                </thead>
+                <tbody id="treasurerTxBody"></tbody>
+              </table>
+            </div>
+          </article>
+        </div>
+
+        <div class="col-lg-5">
+          <article class="chama-card h-100 p-4" id="financialReports">
+            <h2 class="h6 fw-bold mb-3">Financial Reports &amp; Statements</h2>
+            <p class="small text-chama-muted mb-3">
+              Export the current cashbook ledger to CSV or print a committee-ready statement directly from this view.
+            </p>
+            <div class="d-grid gap-2">
+              <button type="button" class="btn btn-chama-outline btn-chama-sm" onclick="window.print()">Print Group Financial Summary</button>
+              <a href="index.html#ussd" class="btn btn-chama-outline btn-chama-sm">Check USSD Sync Preview</a>
+            </div>
+          </article>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script src="js/bootstrap.bundle.min.js"></script>
+  <script src="js/store.js"></script>
+  <script src="js/app.js"></script>
+  <script src="js/dashboards.js"></script>
+</body>
+</html>

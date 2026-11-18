@@ -1,0 +1,80 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block nav_container_class %}container-fluid px-lg-4{% endblock %}
+
+{% block body_wrapper %}
+<div class="dashboard-shell" id="dashboardShell">
+  <aside class="dashboard-sidebar no-print" aria-label="Role navigation">
+    <div>
+      <div class="pb-3 mb-3 border-bottom border-light border-opacity-25 px-2">
+        <div class="small opacity-75 mb-1">{{ user.get_role_display }} Portal</div>
+        <div class="fw-bold text-white">{{ user.chama.name }}</div>
+        <div class="small opacity-75 mono-figure">Code: {{ user.chama.invite_code }}</div>
+      </div>
+
+      <nav class="sidebar-nav-list d-grid gap-1">
+        {% if user.role == 'CHAIRPERSON' %}
+          <a href="{% url 'members:chairperson_dashboard' %}" class="sidebar-link {% if request.resolver_match.url_name == 'chairperson_dashboard' %}is-active{% endif %}">
+            Chairperson Console {% if pending_applications_count %}({{ pending_applications_count }}){% endif %}
+          </a>
+          <a href="{% url 'members:directory' %}" class="sidebar-link {% if request.resolver_match.url_name == 'directory' %}is-active{% endif %}">Member Directory</a>
+          <a href="{% url 'announcements:list' %}" class="sidebar-link {% if request.resolver_match.app_name == 'announcements' %}is-active{% endif %}">Announcements</a>
+          <a href="{% url 'meetings:list' %}" class="sidebar-link {% if request.resolver_match.app_name == 'meetings' %}is-active{% endif %}">Meetings &amp; Occasions</a>
+        {% elif user.role == 'TREASURER' %}
+          <a href="{% url 'payments:treasurer_dashboard' %}" class="sidebar-link {% if request.resolver_match.url_name == 'treasurer_dashboard' %}is-active{% endif %}">
+            Treasurer Console {% if unread_treasurer_notifications_count %}({{ unread_treasurer_notifications_count }}){% endif %}
+          </a>
+          <a href="{% url 'members:directory' %}" class="sidebar-link {% if request.resolver_match.url_name == 'directory' %}is-active{% endif %}">Member Directory</a>
+          <a href="{% url 'announcements:list' %}" class="sidebar-link {% if request.resolver_match.app_name == 'announcements' %}is-active{% endif %}">Announcements</a>
+          <a href="{% url 'meetings:list' %}" class="sidebar-link {% if request.resolver_match.app_name == 'meetings' %}is-active{% endif %}">Meetings &amp; Occasions</a>
+        {% elif user.role == 'SECRETARY' %}
+          <a href="{% url 'meetings:secretary_dashboard' %}" class="sidebar-link {% if request.resolver_match.url_name == 'secretary_dashboard' %}is-active{% endif %}">Secretary Workspace</a>
+          <a href="{% url 'members:directory' %}" class="sidebar-link {% if request.resolver_match.url_name == 'directory' %}is-active{% endif %}">Member Directory</a>
+          <a href="{% url 'announcements:list' %}" class="sidebar-link {% if request.resolver_match.app_name == 'announcements' %}is-active{% endif %}">Announcements</a>
+          <a href="{% url 'meetings:list' %}" class="sidebar-link {% if request.resolver_match.url_name == 'list' %}is-active{% endif %}">Calendar &amp; Occasions</a>
+        {% else %}
+          <a href="{% url 'savings:member_dashboard' %}" class="sidebar-link {% if request.resolver_match.url_name == 'member_dashboard' %}is-active{% endif %}">Financial Overview</a>
+          <a href="{% url 'payments:make_payment' %}" class="sidebar-link {% if request.resolver_match.url_name == 'make_payment' %}is-active{% endif %}">Make a Payment</a>
+          <a href="{% url 'payments:payment_history' %}" class="sidebar-link {% if request.resolver_match.url_name == 'payment_history' %}is-active{% endif %}">Payment History &amp; Receipts</a>
+          <a href="{% url 'loans:member_loans' %}" class="sidebar-link {% if request.resolver_match.app_name == 'loans' %}is-active{% endif %}">Loans Management</a>
+          <a href="{% url 'members:directory' %}" class="sidebar-link {% if request.resolver_match.url_name == 'directory' or request.resolver_match.url_name == 'public_profile' %}is-active{% endif %}">Fellow Members</a>
+          <a href="{% url 'announcements:list' %}" class="sidebar-link {% if request.resolver_match.app_name == 'announcements' %}is-active{% endif %}">Announcements</a>
+          <a href="{% url 'meetings:list' %}" class="sidebar-link {% if request.resolver_match.app_name == 'meetings' %}is-active{% endif %}">Meetings &amp; Occasions</a>
+        {% endif %}
+        <a href="{% url 'members:my_profile' %}" class="sidebar-link {% if request.resolver_match.url_name == 'my_profile' %}is-active{% endif %}">My Profile</a>
+        <a href="{% url 'payments:ussd_access' %}" class="sidebar-link {% if request.resolver_match.url_name == 'ussd_access' %}is-active{% endif %}">USSD Access ({{ ussd_shortcode }})</a>
+      </nav>
+    </div>
+
+    <div class="pt-3 border-top border-light border-opacity-25 d-flex align-items-center gap-3 px-2">
+      {% if user.profile_photo %}
+        <img src="{{ user.profile_photo.url }}" alt="{{ user.full_name }}" class="sidebar-avatar">
+      {% else %}
+        <img src="{% static user.default_avatar_path %}" alt="{{ user.full_name }}" class="sidebar-avatar">
+      {% endif %}
+      <div>
+        <div class="small fw-semibold text-white">{{ user.full_name }}</div>
+        <div class="small opacity-75">{{ user.get_role_display }} &middot; {{ user.member_number|default:"Pending" }}</div>
+      </div>
+    </div>
+  </aside>
+
+  <main class="dashboard-main">
+    {% if messages %}
+      <div class="mb-3 no-print">
+        {% for message in messages %}
+          <div class="alert alert-{{ message.tags }} alert-dismissible fade show small mb-2" role="alert">
+            {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+          </div>
+        {% endfor %}
+      </div>
+    {% endif %}
+
+    {% block dashboard_content %}{% endblock %}
+  </main>
+</div>
+{% endblock %}
+
+{% block footer %}{% endblock %}

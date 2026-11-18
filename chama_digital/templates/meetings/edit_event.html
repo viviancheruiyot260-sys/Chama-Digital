@@ -1,0 +1,27 @@
+{% extends 'dashboard_base.html' %}
+
+{% block title %}Edit Event — Chama Digital{% endblock %}
+
+{% block dashboard_content %}
+<div class="d-flex justify-content-between align-items-center pb-4 mb-4 border-bottom">
+  <div>
+    <div class="small text-chama-muted mb-1">Secretary Event Editor</div>
+    <h1 class="h3 fw-bold mb-0">Edit: {{ event.title }}</h1>
+  </div>
+  <a href="{% url 'meetings:secretary_dashboard' %}" class="btn btn-chama-outline btn-chama-sm">&larr; Back</a>
+</div>
+
+<div class="chama-card p-4 p-md-5" style="max-width: 720px;">
+  <form method="post">
+    {% csrf_token %}
+    {% for field in form %}
+      <div class="mb-3">
+        <label class="form-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
+        {{ field }}
+        {% if field.errors %}<div class="text-danger small mt-1">{{ field.errors|striptags }}</div>{% endif %}
+      </div>
+    {% endfor %}
+    <button type="submit" class="btn btn-chama-primary">Save Event Changes</button>
+  </form>
+</div>
+{% endblock %}

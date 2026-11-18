@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Member Profile — Chama Digital</title>
+  <meta name="description" content="Manage personal profile details, view membership number, status, date joined, savings and loan summary, and change password.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@500;600&family=Plus+Jakarta+Sans:wght@600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/bootstrap.min.css">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body id="memberProfilePage">
+  <header class="sticky-top navbar-chama">
+    <nav class="navbar navbar-expand-lg py-2" aria-label="Primary navigation">
+      <div class="container-fluid px-lg-4">
+        <div class="d-flex align-items-center gap-2">
+          <button type="button" class="btn btn-chama-outline btn-chama-sm" id="sidebarToggleBtn" aria-label="Toggle sidebar">Menu</button>
+          <a class="navbar-brand navbar-brand-chama d-inline-flex align-items-center gap-2" href="index.html">
+            <svg width="28" height="28" viewBox="0 0 32 32" fill="none" aria-hidden="true">
+              <rect width="32" height="32" rx="8" fill="#14532D"/>
+              <circle cx="13.5" cy="16" r="6" stroke="#C59B27" stroke-width="2.5"/>
+              <circle cx="19.5" cy="16" r="6" stroke="#FFFFFF" stroke-width="2.5"/>
+            </svg>
+            <span>Chama Digital</span>
+          </a>
+        </div>
+
+        <div class="d-flex align-items-center gap-2 ms-auto" id="navAuthActions">
+          <button type="button" class="btn btn-chama-outline btn-chama-sm" data-action="logout">Logout</button>
+        </div>
+      </div>
+    </nav>
+  </header>
+
+  <div class="dashboard-shell" id="dashboardShell">
+    <aside class="dashboard-sidebar" aria-label="Member navigation">
+      <div>
+        <div class="pb-3 mb-3 border-bottom border-light border-opacity-25 px-2">
+          <div class="small opacity-75 mb-1">Member Account</div>
+          <div class="fw-bold text-white" id="sidebarChamaName">Umoja Table Banking Chama</div>
+        </div>
+
+        <nav class="sidebar-nav-list d-grid gap-1">
+          <a href="member-dashboard.html" class="sidebar-link">Financial Overview</a>
+          <a href="chama-members.html" class="sidebar-link">Fellow Members</a>
+          <a href="payment-history.html" class="sidebar-link">Payment History &amp; Receipts</a>
+          <a href="member-loans.html" class="sidebar-link">Loans Management</a>
+          <a href="member-profile.html" class="sidebar-link is-active">My Profile</a>
+          <a href="index.html" class="sidebar-link">Public Homepage</a>
+        </nav>
+      </div>
+
+      <div class="pt-3 border-top border-light border-opacity-25 d-flex align-items-center gap-3 px-2">
+        <img id="sidebarAvatar" src="images/avatar-member-amina.jpg" alt="Member portrait" class="sidebar-avatar">
+        <div>
+          <div class="small fw-semibold text-white" id="sidebarUserName">Amina Wanjiku</div>
+          <div class="small opacity-75" id="sidebarUserRole">Member</div>
+        </div>
+      </div>
+    </aside>
+
+    <main class="dashboard-main">
+      <div class="pb-4 mb-4 border-bottom">
+        <div class="small text-chama-muted mb-1">Personal Details &amp; Security</div>
+        <h1 class="h3 fw-bold mb-0">Member Profile</h1>
+      </div>
+
+      <div class="row g-4">
+        <div class="col-lg-5">
+          <article class="chama-card p-4 h-100">
+            <div class="d-flex align-items-center gap-3 pb-3 mb-3 border-bottom">
+              <img id="profileAvatarImg" src="images/avatar-member-amina.jpg" alt="Member profile photograph" class="profile-avatar-lg">
+              <div>
+                <h2 class="h5 fw-bold mb-1" id="profileDisplayName">Amina Wanjiku</h2>
+                <div class="small text-chama-muted">Membership No: <strong class="mono-figure text-chama-ink" id="profileMemberNo">CHM-018</strong></div>
+                <div class="small status-paid fw-semibold mt-1" id="profileStatus">ACTIVE</div>
+              </div>
+            </div>
+
+            <div class="d-grid gap-3 small">
+              <div class="d-flex justify-content-between">
+                <span class="text-chama-muted">Date Joined</span>
+                <strong class="mono-figure" id="profileJoinedDate">15 Jan 2024</strong>
+              </div>
+              <div class="d-flex justify-content-between">
+                <span class="text-chama-muted">Savings Summary</span>
+                <strong class="mono-figure text-chama-green" id="profileSavingsTotal">KES 312,450</strong>
+              </div>
+              <div class="d-flex justify-content-between">
+                <span class="text-chama-muted">Loan Balance Summary</span>
+                <strong class="mono-figure text-chama-gold" id="profileLoanTotal">KES 45,000</strong>
+              </div>
+            </div>
+          </article>
+        </div>
+
+        <div class="col-lg-7">
+          <article class="chama-card p-4 mb-4">
+            <h2 class="h6 fw-bold mb-3">Edit Personal Information</h2>
+            <div id="profileAlert" class="d-none" role="status"></div>
+            <form id="editProfileForm">
+              <div class="mb-3">
+                <label class="form-label" for="profileFullName">Full Name</label>
+                <input type="text" class="form-control" id="profileFullName" required>
+              </div>
+              <div class="row g-3 mb-4">
+                <div class="col-sm-6">
+                  <label class="form-label" for="profilePhone">Phone Number</label>
+                  <input type="tel" class="form-control mono-figure" id="profilePhone" required>
+                </div>
+                <div class="col-sm-6">
+                  <label class="form-label" for="profileEmail">Email Address</label>
+                  <input type="email" class="form-control" id="profileEmail" required>
+                </div>
+              </div>
+              <button type="submit" class="btn btn-chama-primary btn-chama-sm">Save Profile Changes</button>
+            </form>
+          </article>
+
+          <article class="chama-card p-4">
+            <h2 class="h6 fw-bold mb-3">Change Password</h2>
+            <div id="passwordAlert" class="d-none" role="status"></div>
+            <form id="changePasswordForm">
+              <div class="mb-3">
+                <label class="form-label" for="currentPassword">Current Password</label>
+                <input type="password" class="form-control" id="currentPassword" required>
+              </div>
+              <div class="row g-3 mb-4">
+                <div class="col-sm-6">
+                  <label class="form-label" for="newPassword">New Password</label>
+                  <input type="password" class="form-control" id="newPassword" required>
+                </div>
+                <div class="col-sm-6">
+                  <label class="form-label" for="confirmNewPassword">Confirm New Password</label>
+                  <input type="password" class="form-control" id="confirmNewPassword" required>
+                </div>
+              </div>
+              <button type="submit" class="btn btn-chama-gold btn-chama-sm">Update Password</button>
+            </form>
+          </article>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script src="js/bootstrap.bundle.min.js"></script>
+  <script src="js/store.js"></script>
+  <script src="js/app.js"></script>
+  <script src="js/dashboards.js"></script>
+</body>
+</html>

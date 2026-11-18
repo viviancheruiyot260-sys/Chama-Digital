@@ -1,0 +1,56 @@
+{% extends 'dashboard_base.html' %}
+
+{% block title %}Group Announcements — Chama Digital{% endblock %}
+
+{% block dashboard_content %}
+<div class="d-flex flex-wrap justify-content-between align-items-center gap-3 pb-4 mb-4 border-bottom">
+  <div>
+    <div class="small text-chama-muted mb-1">Official Chama Notices &amp; Updates</div>
+    <h1 class="h3 fw-bold mb-0">Group Announcements</h1>
+  </div>
+  <div class="d-flex flex-wrap gap-2">
+    <form method="get" class="d-flex gap-2">
+      <select name="category" class="form-select form-select-sm" style="width:auto; min-height:36px;">
+        <option value="ALL" {% if category_filter == 'ALL' %}selected{% endif %}>All Categories</option>
+        {% for val, label in categories %}
+          <option value="{{ val }}" {% if category_filter == val %}selected{% endif %}>{{ label }}</option>
+        {% endfor %}
+      </select>
+      <button type="submit" class="btn btn-chama-outline btn-chama-sm">Filter</button>
+    </form>
+    {% if can_post %}
+      <a href="{% url 'announcements:create' %}" class="btn btn-chama-primary btn-chama-sm">+ Create Announcement</a>
+    {% endif %}
+  </div>
+</div>
+
+<div class="row g-4">
+  {% for ann in announcements %}
+    <div class="col-md-6">
+      <article class="chama-card p-4 h-100 d-flex flex-column justify-content-between">
+        <div>
+          <div class="d-flex justify-content-between align-items-center gap-2 mb-2">
+            <span class="status-label {% if ann.category == 'EMERGENCY' %}status-overdue{% elif ann.category == 'IMPORTANT_NOTICE' or ann.category == 'CONTRIBUTION_REMINDER' %}status-pending{% else %}status-paid{% endif %}">
+              {{ ann.get_category_display }}
+            </span>
+            <span class="mono-figure small text-chama-muted">{{ ann.created_at|date:"d M Y" }}</span>
+          </div>
+          <h2 class="h5 fw-bold mb-2">
+            <a href="{% url 'announcements:detail' ann.pk %}" class="text-decoration-none text-chama-ink">{{ ann.title }}</a>
+          </h2>
+          <p class="small text-chama-muted mb-3">{{ ann.body|truncatechars:180 }}</p>
+        </div>
+
+        <div class="d-flex justify-content-between align-items-center pt-3 border-top small">
+          <span class="text-chama-green">Posted by {{ ann.author.full_name|default:"Official" }}</span>
+          <a href="{% url 'announcements:detail' ann.pk %}" class="fw-semibold text-decoration-none text-chama-green">Read Full Notice &rarr;</a>
+        </div>
+      </article>
+    </div>
+  {% empty %}
+    <div class="col-12">
+      <div class="chama-card p-4 text-center text-chama-muted">No announcements found for this category.</div>
+    </div>
+  {% endfor %}
+</div>
+{% endblock %}

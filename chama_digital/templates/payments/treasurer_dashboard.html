@@ -1,0 +1,269 @@
+{% extends 'dashboard_base.html' %}
+{% load humanize %}
+
+{% block title %}Treasurer Dashboard — Chama Digital{% endblock %}
+
+{% block dashboard_content %}
+<div class="d-flex flex-wrap justify-content-between align-items-center gap-3 pb-4 mb-4 border-bottom">
+  <div>
+    <div class="small text-chama-muted mb-1">Treasurer Console &middot; Cashbook, Bank Verification, Loans &amp; Alerts</div>
+    <h1 class="h3 fw-bold mb-0">Treasurer Console — {{ user.full_name }}</h1>
+  </div>
+  <div class="d-flex gap-2">
+    <a href="{% url 'payments:export_ledger_csv' %}" class="btn btn-chama-primary btn-chama-sm">Export Financial CSV</a>
+  </div>
+</div>
+
+<!-- Financial KPIs -->
+<div class="row g-3 mb-4">
+  <div class="col-sm-6 col-xl-3">
+    <article class="chama-card p-3 h-100">
+      <div class="small text-chama-muted mb-1">Total Group Savings</div>
+      <div class="kpi-value text-chama-green">KES {{ total_savings|floatformat:2|intcomma }}</div>
+    </article>
+  </div>
+  <div class="col-sm-6 col-xl-3">
+    <article class="chama-card p-3 h-100">
+      <div class="small text-chama-muted mb-1">Nov Contributions</div>
+      <div class="kpi-value">KES {{ monthly_contributions|floatformat:2|intcomma }}</div>
+    </article>
+  </div>
+  <div class="col-sm-6 col-xl-3">
+    <article class="chama-card p-3 h-100">
+      <div class="small text-chama-muted mb-1">M-Pesa / Bank Confirmed</div>
+      <div class="small fw-semibold mono-figure">M-Pesa: KES {{ mpesa_total|floatformat:0|intcomma }}</div>
+      <div class="small fw-semibold mono-figure text-chama-green">Bank: KES {{ bank_total|floatformat:0|intcomma }}</div>
+    </article>
+  </div>
+  <div class="col-sm-6 col-xl-3">
+    <article class="chama-card p-3 h-100">
+      <div class="small text-chama-muted mb-1">Outstanding Group Loans</div>
+      <div class="kpi-value text-chama-gold">KES {{ total_outstanding_loans|floatformat:2|intcomma }}</div>
+    </article>
+  </div>
+</div>
+
+<!-- Pending Payment Verifications (Bank Transfers / Deposits) -->
+<article class="chama-card mb-4 overflow-hidden">
+  <div class="px-4 py-3 border-bottom d-flex justify-content-between align-items-center">
+    <h2 class="h6 fw-bold mb-0">Pending Payment Verifications (Bank Transfers)</h2>
+    <span class="status-label status-pending">{{ pending_verifications|length }} Awaiting Review</span>
+  </div>
+  <div class="table-responsive">
+    <table class="table table-hover table-chama align-middle">
+      <thead>
+        <tr>
+          <th>Date</th>
+          <th>Member</th>
+          <th>Month</th>
+          <th>Method &amp; Bank</th>
+          <th>Reference</th>
+          <th class="text-end">Amount</th>
+          <th class="text-end">Verification Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for tx in pending_verifications %}
+          <tr>
+            <td class="mono-figure">{{ tx.created_at|date:"d M Y, H:i" }}</td>
+            <td>{{ tx.member.full_name }} ({{ tx.member.member_number }})</td>
+            <td>{{ tx.contribution_month_label }}</td>
+            <td>{{ tx.get_payment_method_display }} {% if tx.bank_name %}&middot; {{ tx.bank_name }}{% endif %}</td>
+            <td class="mono-figure">
+              {{ tx.external_reference }}
+              {% if tx.proof_of_payment %}
+                <a href="{{ tx.proof_of_payment.url }}" target="_blank" class="d-block small text-chama-green">View Proof</a>
+              {% endif %}
+            </td>
+            <td class="text-end mono-figure">KES {{ tx.amount|floatformat:2|intcomma }}</td>
+            <td class="text-end text-nowrap">
+              <form method="post" action="{% url 'payments:verify_payment' tx.pk %}" class="d-inline">
+                {% csrf_token %}
+                <input type="hidden" name="decision" value="verify">
+                <button type="submit" class="btn btn-chama-primary btn-chama-sm">Verify &amp; Confirm</button>
+              </form>
+              <form method="post" action="{% url 'payments:verify_payment' tx.pk %}" class="d-inline">
+                {% csrf_token %}
+                <input type="hidden" name="decision" value="reject">
+                <button type="submit" class="btn btn-chama-outline btn-chama-sm">Reject</button>
+              </form>
+            </td>
+          </tr>
+        {% empty %}
+          <tr><td colspan="7" class="text-center py-4 text-chama-muted">No pending bank payments awaiting verification.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</article>
+
+<!-- Treasurer Notifications Feed -->
+<article class="chama-card mb-4 overflow-hidden">
+  <div class="px-4 py-3 border-bottom d-flex flex-wrap justify-content-between align-items-center gap-2">
+    <div class="d-flex align-items-center gap-2">
+      <h2 class="h6 fw-bold mb-0">Treasurer Payment Notifications</h2>
+      <span class="status-label status-pending">{{ unread_treasurer_notifications_count }} Unread</span>
+    </div>
+    <form method="post" action="{% url 'payments:mark_notifications_read' %}">
+      {% csrf_token %}
+      <button type="submit" class="btn btn-chama-outline btn-chama-sm">Mark All Read</button>
+    </form>
+  </div>
+  <ul class="list-group list-group-flush">
+    {% for n in notifications %}
+      <li class="list-group-item px-4 py-3 d-flex justify-content-between align-items-start gap-3">
+        <div>
+          <div class="small fw-semibold {% if not n.is_read %}text-chama-green{% endif %}">{{ n.title }}</div>
+          <div class="small text-chama-muted">{{ n.message }}</div>
+          <div class="small text-chama-muted mono-figure">{{ n.created_at|date:"d M Y, H:i" }}</div>
+        </div>
+        <span class="status-label {% if n.is_read %}status-paid{% else %}status-pending{% endif %}">{% if n.is_read %}Read{% else %}Unread{% endif %}</span>
+      </li>
+    {% empty %}
+      <li class="list-group-item px-4 py-3 small text-chama-muted">No notifications recorded yet.</li>
+    {% endfor %}
+  </ul>
+</article>
+
+<!-- Members With Overdue Contributions + All Member Savings -->
+<div class="row g-4 mb-4">
+  <div class="col-lg-7">
+    <article class="chama-card h-100 overflow-hidden">
+      <div class="px-4 py-3 border-bottom">
+        <h2 class="h6 fw-bold mb-0">Member Savings &amp; November Status</h2>
+      </div>
+      <div class="table-responsive">
+        <table class="table table-hover table-chama align-middle">
+          <thead>
+            <tr>
+              <th>Member</th>
+              <th>Member No.</th>
+              <th>Nov Status</th>
+              <th class="text-end">Total Savings</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for row in member_rows %}
+              <tr>
+                <td>{{ row.member.full_name }}</td>
+                <td class="mono-figure">{{ row.member.member_number }}</td>
+                <td>
+                  {% if row.paid_nov %}
+                    <span class="status-label status-paid">Paid</span>
+                  {% else %}
+                    <span class="status-label status-pending">Overdue / Unpaid</span>
+                  {% endif %}
+                </td>
+                <td class="text-end mono-figure">KES {{ row.total_savings|floatformat:2|intcomma }}</td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </article>
+  </div>
+
+  <div class="col-lg-5">
+    <article class="chama-card h-100 overflow-hidden">
+      <div class="px-4 py-3 border-bottom">
+        <h2 class="h6 fw-bold mb-0">Members With Unpaid Nov Contributions</h2>
+      </div>
+      <ul class="list-group list-group-flush">
+        {% for row in overdue_members %}
+          <li class="list-group-item px-4 py-3 d-flex justify-content-between align-items-center">
+            <div>
+              <div class="fw-semibold small">{{ row.member.full_name }}</div>
+              <div class="small text-chama-muted mono-figure">{{ row.member.phone_number }}</div>
+            </div>
+            <span class="status-label status-overdue">Due: KES {{ row.account.monthly_target|floatformat:0|intcomma }}</span>
+          </li>
+        {% empty %}
+          <li class="list-group-item px-4 py-3 small text-chama-green">All active members have paid for November!</li>
+        {% endfor %}
+      </ul>
+    </article>
+  </div>
+</div>
+
+<!-- Group Loans & Recent Transactions -->
+<article class="chama-card mb-4 overflow-hidden">
+  <div class="px-4 py-3 border-bottom">
+    <h2 class="h6 fw-bold mb-0">Active Loans &amp; Repayment Recording</h2>
+  </div>
+  <div class="table-responsive">
+    <table class="table table-hover table-chama align-middle">
+      <thead>
+        <tr>
+          <th>Loan ID</th>
+          <th>Member</th>
+          <th>Status</th>
+          <th class="text-end">Principal</th>
+          <th class="text-end">Repaid</th>
+          <th class="text-end">Balance</th>
+          <th class="text-end">Record Repayment</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for loan in active_loans %}
+          <tr>
+            <td class="mono-figure">{{ loan.loan_code }}</td>
+            <td>{{ loan.member.full_name }}</td>
+            <td><span class="status-label {% if loan.status == 'COMPLETED' %}status-paid{% else %}status-pending{% endif %}">{{ loan.get_status_display }}</span></td>
+            <td class="text-end mono-figure">KES {{ loan.principal_amount|floatformat:2|intcomma }}</td>
+            <td class="text-end mono-figure">KES {{ loan.total_repaid|floatformat:2|intcomma }}</td>
+            <td class="text-end mono-figure">KES {{ loan.outstanding_balance|floatformat:2|intcomma }}</td>
+            <td class="text-end">
+              {% if loan.outstanding_balance > 0 %}
+                <form method="post" action="{% url 'loans:record_repayment' loan.pk %}" class="d-inline-flex gap-1 align-items-center">
+                  {% csrf_token %}
+                  <input type="number" name="amount" class="form-control form-control-sm mono-figure" style="width:105px; min-height:32px;" placeholder="Amount" min="100" required>
+                  <input type="text" name="reference" class="form-control form-control-sm mono-figure" style="width:105px; min-height:32px;" placeholder="Ref" required>
+                  <button type="submit" class="btn btn-chama-primary btn-chama-sm">Save</button>
+                </form>
+              {% else %}
+                <span class="small text-chama-green">Cleared</span>
+              {% endif %}
+            </td>
+          </tr>
+        {% empty %}
+          <tr><td colspan="7" class="text-center py-4 text-chama-muted">No loans recorded.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</article>
+
+<article class="chama-card overflow-hidden">
+  <div class="px-4 py-3 border-bottom">
+    <h2 class="h6 fw-bold mb-0">Recent Financial Transactions</h2>
+  </div>
+  <div class="table-responsive">
+    <table class="table table-hover table-chama align-middle">
+      <thead>
+        <tr>
+          <th>Date</th>
+          <th>Member</th>
+          <th>Month</th>
+          <th>Method</th>
+          <th>Reference</th>
+          <th>Status</th>
+          <th class="text-end">Amount</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for tx in recent_transactions %}
+          <tr>
+            <td class="mono-figure">{{ tx.created_at|date:"d M Y" }}</td>
+            <td>{{ tx.member.full_name }}</td>
+            <td>{{ tx.contribution_month_label }}</td>
+            <td>{{ tx.get_payment_method_display }}</td>
+            <td class="mono-figure">{{ tx.external_reference }}</td>
+            <td><span class="status-label {% if tx.status == 'SUCCESSFUL' %}status-paid{% elif tx.status == 'PENDING_VERIFICATION' %}status-pending{% else %}status-overdue{% endif %}">{{ tx.get_status_display }}</span></td>
+            <td class="text-end mono-figure">KES {{ tx.amount|floatformat:2|intcomma }}</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</article>
+{% endblock %}

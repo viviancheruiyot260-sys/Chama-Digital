@@ -1,0 +1,6 @@
+{
+  "name": "Chama Digital",
+  "description": "A modern digital platform for Kenyan savings groups (chamas), investment clubs, and merry-go-round groups to manage contributions, savings, loans, meetings, and financial reports.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

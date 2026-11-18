@@ -1,0 +1,57 @@
+{% extends 'dashboard_base.html' %}
+{% load static %}
+
+{% block title %}{{ peer.full_name }} — Chama Profile | Chama Digital{% endblock %}
+
+{% block dashboard_content %}
+<div class="d-flex flex-wrap justify-content-between align-items-center gap-3 pb-4 mb-4 border-bottom">
+  <div>
+    <div class="small text-chama-muted mb-1">Same-Chama Public Member Profile</div>
+    <h1 class="h3 fw-bold mb-0">{{ peer.full_name }}</h1>
+  </div>
+  <a href="{% url 'members:directory' %}" class="btn btn-chama-outline btn-chama-sm">&larr; Back to Directory</a>
+</div>
+
+<div class="row justify-content-center">
+  <div class="col-lg-7">
+    <article class="chama-card p-4 p-md-5">
+      <div class="d-flex align-items-center gap-4 pb-4 mb-4 border-bottom">
+        {% if peer.profile_photo %}
+          <img src="{{ peer.profile_photo.url }}" alt="{{ peer.full_name }}" class="profile-avatar-lg">
+        {% else %}
+          <img src="{% static peer.default_avatar_path %}" alt="{{ peer.full_name }}" class="profile-avatar-lg">
+        {% endif %}
+        <div>
+          <h2 class="h4 fw-bold mb-1">{{ peer.full_name }}</h2>
+          <div class="text-chama-green fw-semibold mb-1">{{ peer.get_role_display }} &middot; <span class="mono-figure">{{ peer.member_number }}</span></div>
+          <div class="small text-chama-muted">{{ peer.chama.name }}</div>
+        </div>
+      </div>
+
+      <div class="mb-4">
+        <div class="small fw-semibold text-chama-muted mb-1">Biography</div>
+        <p class="mb-0">{{ peer.bio|default:"No biography shared yet." }}</p>
+      </div>
+
+      <div class="d-grid gap-2 small pt-3 border-top">
+        <div class="d-flex justify-content-between">
+          <span class="text-chama-muted">Date Joined</span>
+          <strong class="mono-figure">{{ peer.created_at|date:"d M Y" }}</strong>
+        </div>
+        <div class="d-flex justify-content-between">
+          <span class="text-chama-muted">Phone Number</span>
+          {% if peer.show_phone_in_directory %}
+            <strong class="mono-figure">{{ peer.phone_number }}</strong>
+          {% else %}
+            <span class="text-chama-muted fst-italic">Private</span>
+          {% endif %}
+        </div>
+        <div class="d-flex justify-content-between">
+          <span class="text-chama-muted">Savings &amp; Loans</span>
+          <span class="text-chama-muted fst-italic">Private financial information (not visible to peers)</span>
+        </div>
+      </div>
+    </article>
+  </div>
+</div>
+{% endblock %}

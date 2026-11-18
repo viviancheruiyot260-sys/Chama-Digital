@@ -1,0 +1,26 @@
+{% extends 'dashboard_base.html' %}
+
+{% block title %}{{ announcement.title }} — Chama Digital{% endblock %}
+
+{% block dashboard_content %}
+<div class="d-flex justify-content-between align-items-center pb-4 mb-4 border-bottom">
+  <div>
+    <div class="small text-chama-muted mb-1">{{ announcement.get_category_display }} &middot; {{ announcement.created_at|date:"d M Y, H:i" }}</div>
+    <h1 class="h3 fw-bold mb-0">{{ announcement.title }}</h1>
+  </div>
+  <a href="{% url 'announcements:list' %}" class="btn btn-chama-outline btn-chama-sm">&larr; All Announcements</a>
+</div>
+
+<article class="chama-card p-4 p-md-5" style="max-width: 820px;">
+  <div class="small text-chama-green fw-semibold mb-3">
+    Posted by {{ announcement.author.full_name|default:"Group Official" }}
+    {% if announcement.expiry_date %} &middot; Expires {{ announcement.expiry_date|date:"d M Y" }}{% endif %}
+  </div>
+  <div class="mb-4" style="white-space: pre-line;">{{ announcement.body }}</div>
+  {% if announcement.attachment %}
+    <div class="pt-3 border-top">
+      <a href="{{ announcement.attachment.url }}" target="_blank" class="btn btn-chama-outline btn-chama-sm">Download Attachment</a>
+    </div>
+  {% endif %}
+</article>
+{% endblock %}

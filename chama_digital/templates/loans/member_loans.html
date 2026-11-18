@@ -1,0 +1,219 @@
+{% extends 'dashboard_base.html' %}
+{% load humanize %}
+
+{% block title %}Loans Management — Chama Digital{% endblock %}
+
+{% block dashboard_content %}
+<div class="d-flex flex-wrap justify-content-between align-items-center gap-3 pb-4 mb-4 border-bottom">
+  <div>
+    <div class="small text-chama-muted mb-1">Member Credit, Applications &amp; Repayments</div>
+    <h1 class="h3 fw-bold mb-0">Loans Management</h1>
+  </div>
+  <a href="{% url 'payments:make_payment' %}" class="btn btn-chama-primary btn-chama-sm">Make Loan Repayment</a>
+</div>
+
+<!-- Savings-Based Loan Eligibility Card -->
+<article class="chama-card p-4 mb-4">
+  <div class="d-flex flex-wrap justify-content-between align-items-start gap-3 mb-3">
+    <div>
+      <div class="small text-chama-muted mb-1">Loan Eligibility Check ({{ eligibility.multiplier }}&times; Verified Savings Rule)</div>
+      <h2 class="h5 fw-bold mb-1">
+        <span class="status-label {{ eligibility.status_css_class }} fs-6">{{ eligibility.status_label }}</span>
+      </h2>
+      <p class="small text-chama-muted mb-0">{{ eligibility.reason }}</p>
+    </div>
+    <div class="text-md-end">
+      <div class="small text-chama-muted">Available to Borrow Now</div>
+      <div class="kpi-value {% if eligibility.is_eligible %}text-chama-green{% else %}text-chama-gold{% endif %}">
+        KES {{ eligibility.remaining_apply_capacity|floatformat:2|intcomma }}
+      </div>
+    </div>
+  </div>
+
+  <div class="row g-3 pt-3 border-top">
+    <div class="col-6 col-md-3">
+      <div class="small text-chama-muted">Verified Savings</div>
+      <div class="fw-semibold mono-figure">KES {{ eligibility.total_savings|floatformat:2|intcomma }}</div>
+    </div>
+    <div class="col-6 col-md-3">
+      <div class="small text-chama-muted">Max Limit ({{ eligibility.multiplier }}&times; Savings)</div>
+      <div class="fw-semibold mono-figure">KES {{ eligibility.max_loan_limit|floatformat:2|intcomma }}</div>
+    </div>
+    <div class="col-6 col-md-3">
+      <div class="small text-chama-muted">Active Loan Balance</div>
+      <div class="fw-semibold mono-figure">KES {{ eligibility.active_loan_balance|floatformat:2|intcomma }}</div>
+    </div>
+    <div class="col-6 col-md-3">
+      <div class="small text-chama-muted">Pending Applications</div>
+      <div class="fw-semibold mono-figure">KES {{ eligibility.pending_applications_total|floatformat:2|intcomma }}</div>
+    </div>
+  </div>
+
+  {% if eligibility.max_loan_limit > 0 %}
+    <div class="mt-3">
+      <div class="d-flex justify-content-between small text-chama-muted mb-1">
+        <span>Borrowing Limit Used</span>
+        <span class="mono-figure">{{ eligibility.utilization_percent }}%</span>
+      </div>
+      <div class="progress progress-chama" role="progressbar" aria-label="Borrowing limit utilization" aria-valuenow="{{ eligibility.utilization_percent }}" aria-valuemin="0" aria-valuemax="100">
+        <div class="progress-bar" style="width: {{ eligibility.utilization_percent }}%;"></div>
+      </div>
+    </div>
+  {% endif %}
+</article>
+
+<div class="row g-3 mb-4">
+  <div class="col-md-4">
+    <article class="chama-card p-3 h-100">
+      <div class="small text-chama-muted mb-1">Current Loan Balance</div>
+      <div class="kpi-value text-chama-gold">KES {{ outstanding_balance|floatformat:2|intcomma }}</div>
+    </article>
+  </div>
+  <div class="col-md-4">
+    <article class="chama-card p-3 h-100">
+      <div class="small text-chama-muted mb-1">Total Repaid to Date</div>
+      <div class="kpi-value text-chama-green">KES {{ total_repaid|floatformat:2|intcomma }}</div>
+    </article>
+  </div>
+  <div class="col-md-4">
+    <article class="chama-card p-3 h-100">
+      <div class="small text-chama-muted mb-1">Upcoming Repayment Date</div>
+      <div class="kpi-value">{{ next_due|date:"d M Y"|default:"No active loan" }}</div>
+    </article>
+  </div>
+</div>
+
+<div class="row g-4 mb-4">
+  <div class="col-lg-5">
+    <article class="chama-card p-4 h-100">
+      <h2 class="h6 fw-bold mb-1">Apply for a Chama Loan</h2>
+      {% if eligibility.is_eligible %}
+        <p class="small text-chama-muted mb-3">
+          You can apply for up to <strong class="mono-figure text-chama-green">KES {{ eligibility.remaining_apply_capacity|floatformat:2|intcomma }}</strong> based on your verified savings. Applications go to the Chairperson and Treasurer for review.
+        </p>
+      {% else %}
+        <div class="approval-notice mb-3">
+          <div class="small fw-semibold mb-1">{{ eligibility.status_label }}</div>
+          <p class="small text-chama-muted mb-2">{{ eligibility.reason }}</p>
+          <a href="{% url 'payments:make_payment' %}" class="small fw-semibold text-decoration-none text-chama-green">Make a Savings or Loan Payment &rarr;</a>
+        </div>
+      {% endif %}
+      <form method="post">
+        {% csrf_token %}
+        {% for field in form %}
+          <div class="mb-3">
+            <label class="form-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
+            {{ field }}
+            {% if field.errors %}<div class="text-danger small mt-1">{{ field.errors|striptags }}</div>{% endif %}
+          </div>
+        {% endfor %}
+        <button type="submit" class="btn btn-chama-primary w-100" {% if not eligibility.is_eligible %}disabled{% endif %}>
+          {% if eligibility.is_eligible %}Submit Loan Application{% else %}Loan Limit Currently Unavailable{% endif %}
+        </button>
+      </form>
+    </article>
+  </div>
+
+  <div class="col-lg-7">
+    <article class="chama-card h-100 overflow-hidden">
+      <div class="px-4 py-3 border-bottom">
+        <h2 class="h6 fw-bold mb-0">Loan Applications</h2>
+      </div>
+      <div class="table-responsive">
+        <table class="table table-hover table-chama align-middle">
+          <thead>
+            <tr>
+              <th>Date</th>
+              <th>Purpose</th>
+              <th>Months</th>
+              <th class="text-end">Requested</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for app in applications %}
+              <tr>
+                <td class="mono-figure">{{ app.created_at|date:"d M Y" }}</td>
+                <td>{{ app.purpose }}</td>
+                <td>{{ app.repayment_months }}</td>
+                <td class="text-end mono-figure">KES {{ app.requested_amount|floatformat:2|intcomma }}</td>
+                <td><span class="status-label {% if app.status == 'APPROVED' %}status-paid{% elif app.status == 'PENDING' %}status-pending{% else %}status-overdue{% endif %}">{{ app.get_status_display }}</span></td>
+              </tr>
+            {% empty %}
+              <tr><td colspan="5" class="text-center py-4 text-chama-muted">No loan applications submitted yet.</td></tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </article>
+  </div>
+</div>
+
+<article class="chama-card mb-4 overflow-hidden">
+  <div class="px-4 py-3 border-bottom">
+    <h2 class="h6 fw-bold mb-0">Active &amp; Previous Loans (Balances Calculated from Repayments)</h2>
+  </div>
+  <div class="table-responsive">
+    <table class="table table-hover table-chama align-middle">
+      <thead>
+        <tr>
+          <th>Loan ID</th>
+          <th>Purpose</th>
+          <th class="text-end">Principal</th>
+          <th class="text-end">Repaid</th>
+          <th class="text-end">Balance</th>
+          <th>Installment</th>
+          <th>Next Due</th>
+          <th>Status</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for loan in loans %}
+          <tr>
+            <td class="mono-figure">{{ loan.loan_code }}</td>
+            <td>{{ loan.purpose }}</td>
+            <td class="text-end mono-figure">KES {{ loan.principal_amount|floatformat:2|intcomma }}</td>
+            <td class="text-end mono-figure">KES {{ loan.total_repaid|floatformat:2|intcomma }}</td>
+            <td class="text-end mono-figure">KES {{ loan.outstanding_balance|floatformat:2|intcomma }}</td>
+            <td class="mono-figure">KES {{ loan.installment_amount|floatformat:2|intcomma }}/mo</td>
+            <td class="mono-figure">{{ loan.next_repayment_date|date:"d M Y"|default:"—" }}</td>
+            <td><span class="status-label {% if loan.status == 'COMPLETED' %}status-paid{% else %}status-pending{% endif %}">{{ loan.get_status_display }}</span></td>
+          </tr>
+        {% empty %}
+          <tr><td colspan="8" class="text-center py-4 text-chama-muted">No active or previous loans.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</article>
+
+<article class="chama-card overflow-hidden">
+  <div class="px-4 py-3 border-bottom">
+    <h2 class="h6 fw-bold mb-0">Verified Repayment History</h2>
+  </div>
+  <div class="table-responsive">
+    <table class="table table-hover table-chama align-middle">
+      <thead>
+        <tr>
+          <th>Date</th>
+          <th>Loan ID</th>
+          <th>Reference</th>
+          <th class="text-end">Amount Repaid</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for rep in repayments %}
+          <tr>
+            <td class="mono-figure">{{ rep.repaid_at|date:"d M Y" }}</td>
+            <td class="mono-figure">{{ rep.loan.loan_code }}</td>
+            <td class="mono-figure">{{ rep.reference }}</td>
+            <td class="text-end mono-figure">KES {{ rep.amount|floatformat:2|intcomma }}</td>
+          </tr>
+        {% empty %}
+          <tr><td colspan="4" class="text-center py-3 text-chama-muted">No loan repayments recorded yet.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</article>
+{% endblock %}

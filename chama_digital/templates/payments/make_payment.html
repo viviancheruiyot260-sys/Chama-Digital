@@ -1,0 +1,161 @@
+{% extends 'dashboard_base.html' %}
+{% load humanize %}
+
+{% block title %}Make a Payment — Chama Digital{% endblock %}
+
+{% block dashboard_content %}
+<div class="d-flex flex-wrap justify-content-between align-items-center gap-3 pb-4 mb-4 border-bottom">
+  <div>
+    <div class="small text-chama-muted mb-1">Contributions &amp; Loan Repayments &middot; Server-Validated Transactions</div>
+    <h1 class="h3 fw-bold mb-0">Make a Payment</h1>
+  </div>
+  <a href="{% url 'payments:payment_history' %}" class="btn btn-chama-outline btn-chama-sm">Payment History</a>
+</div>
+
+<div class="row g-4">
+  <div class="col-lg-8">
+    <div class="chama-card p-4 p-md-5">
+      <div class="reg-path-tabs mb-4">
+        <a href="{% url 'payments:make_payment' %}?method=mpesa" class="nav-link text-decoration-none {% if active_tab != 'bank' %}active{% endif %}">
+          M-Pesa (STK / Paybill)
+        </a>
+        <a href="{% url 'payments:make_payment' %}?method=bank" class="nav-link text-decoration-none {% if active_tab == 'bank' %}active{% endif %}">
+          Bank Transfer / Deposit
+        </a>
+      </div>
+
+      {% if active_tab == 'bank' %}
+        <div class="approval-notice small mb-4">
+          <strong>Bank Payment Verification:</strong> Deposit or transfer to <strong>{{ chama.bank_name }}</strong> (Account: <code class="mono-figure">{{ chama.bank_account }}</code>). Bank payments stay <em>Pending Treasurer Verification</em> and do not update your savings balance until the Treasurer confirms them.
+        </div>
+
+        <form method="post" action="{% url 'payments:make_payment' %}?method=bank" enctype="multipart/form-data">
+          {% csrf_token %}
+          <input type="hidden" name="channel_group" value="bank">
+
+          <div class="row g-3 mb-3">
+            <div class="col-sm-6">
+              <label class="form-label" for="{{ bank_form.contribution_month.id_for_label }}">{{ bank_form.contribution_month.label }}</label>
+              {{ bank_form.contribution_month }}
+            </div>
+            <div class="col-sm-6">
+              <label class="form-label" for="{{ bank_form.amount.id_for_label }}">{{ bank_form.amount.label }}</label>
+              {{ bank_form.amount }}
+              {% if bank_form.amount.errors %}<div class="text-danger small mt-1">{{ bank_form.amount.errors|striptags }}</div>{% endif %}
+            </div>
+          </div>
+
+          <div class="row g-3 mb-3">
+            <div class="col-sm-6">
+              <label class="form-label" for="{{ bank_form.bank_name.id_for_label }}">{{ bank_form.bank_name.label }}</label>
+              {{ bank_form.bank_name }}
+            </div>
+            <div class="col-sm-6">
+              <label class="form-label" for="{{ bank_form.payment_method.id_for_label }}">{{ bank_form.payment_method.label }}</label>
+              {{ bank_form.payment_method }}
+            </div>
+          </div>
+
+          <div class="row g-3 mb-3">
+            <div class="col-sm-6">
+              <label class="form-label" for="{{ bank_form.external_reference.id_for_label }}">{{ bank_form.external_reference.label }}</label>
+              {{ bank_form.external_reference }}
+              {% if bank_form.external_reference.errors %}<div class="text-danger small mt-1">{{ bank_form.external_reference.errors|striptags }}</div>{% endif %}
+            </div>
+            <div class="col-sm-6">
+              <label class="form-label" for="{{ bank_form.payment_type.id_for_label }}">{{ bank_form.payment_type.label }}</label>
+              {{ bank_form.payment_type }}
+            </div>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label" for="{{ bank_form.proof_of_payment.id_for_label }}">{{ bank_form.proof_of_payment.label }}</label>
+            {{ bank_form.proof_of_payment }}
+          </div>
+
+          <div class="form-check mb-4 small">
+            {{ bank_form.allow_additional }}
+            <label class="form-check-label" for="{{ bank_form.allow_additional.id_for_label }}">{{ bank_form.allow_additional.label }}</label>
+          </div>
+
+          <button type="submit" class="btn btn-chama-primary w-100">Submit Bank Payment for Verification</button>
+        </form>
+      {% else %}
+        <div class="approval-notice small mb-4">
+          <strong>Development Simulation Notice:</strong> M-Pesa payments here simulate Safaricom Daraja STK Push (`Paybill {{ chama.paybill_number }}`). Simulated confirmation is clearly labeled as development mode and is never presented as live M-Pesa settlement.
+        </div>
+
+        <form method="post" action="{% url 'payments:make_payment' %}?method=mpesa">
+          {% csrf_token %}
+          <input type="hidden" name="channel_group" value="mpesa">
+
+          <div class="row g-3 mb-3">
+            <div class="col-sm-6">
+              <label class="form-label" for="{{ mpesa_form.contribution_month.id_for_label }}">{{ mpesa_form.contribution_month.label }}</label>
+              {{ mpesa_form.contribution_month }}
+            </div>
+            <div class="col-sm-6">
+              <label class="form-label" for="{{ mpesa_form.amount.id_for_label }}">{{ mpesa_form.amount.label }}</label>
+              {{ mpesa_form.amount }}
+              {% if mpesa_form.amount.errors %}<div class="text-danger small mt-1">{{ mpesa_form.amount.errors|striptags }}</div>{% endif %}
+            </div>
+          </div>
+
+          <div class="row g-3 mb-3">
+            <div class="col-sm-6">
+              <label class="form-label" for="{{ mpesa_form.phone_number.id_for_label }}">{{ mpesa_form.phone_number.label }}</label>
+              {{ mpesa_form.phone_number }}
+            </div>
+            <div class="col-sm-6">
+              <label class="form-label" for="{{ mpesa_form.payment_method.id_for_label }}">{{ mpesa_form.payment_method.label }}</label>
+              {{ mpesa_form.payment_method }}
+            </div>
+          </div>
+
+          <div class="row g-3 mb-3">
+            <div class="col-sm-6">
+              <label class="form-label" for="{{ mpesa_form.payment_type.id_for_label }}">{{ mpesa_form.payment_type.label }}</label>
+              {{ mpesa_form.payment_type }}
+            </div>
+            <div class="col-sm-6">
+              <label class="form-label" for="{{ mpesa_form.simulated_outcome.id_for_label }}">{{ mpesa_form.simulated_outcome.label }}</label>
+              {{ mpesa_form.simulated_outcome }}
+            </div>
+          </div>
+
+          <div class="d-grid gap-2 mb-4 small">
+            <div class="form-check">
+              {{ mpesa_form.allow_additional }}
+              <label class="form-check-label" for="{{ mpesa_form.allow_additional.id_for_label }}">{{ mpesa_form.allow_additional.label }}</label>
+            </div>
+            <div class="d-flex gap-4">
+              <div class="form-check">
+                {{ mpesa_form.notify_email }}
+                <label class="form-check-label" for="{{ mpesa_form.notify_email.id_for_label }}">{{ mpesa_form.notify_email.label }}</label>
+              </div>
+              <div class="form-check">
+                {{ mpesa_form.notify_sms }}
+                <label class="form-check-label" for="{{ mpesa_form.notify_sms.id_for_label }}">{{ mpesa_form.notify_sms.label }}</label>
+              </div>
+            </div>
+          </div>
+
+          <button type="submit" class="btn btn-chama-primary w-100">Pay via Simulated M-Pesa</button>
+        </form>
+      {% endif %}
+    </div>
+  </div>
+
+  <div class="col-lg-4">
+    <div class="chama-card p-4">
+      <h2 class="h6 fw-bold mb-3">Chama Payment Channels</h2>
+      <div class="small d-grid gap-2">
+        <div><span class="text-chama-muted d-block">M-Pesa Paybill</span><strong class="mono-figure">{{ chama.paybill_number }} (Acc: {{ user.member_number }})</strong></div>
+        <div><span class="text-chama-muted d-block">Group Bank</span><strong>{{ chama.bank_name }}</strong></div>
+        <div><span class="text-chama-muted d-block">Bank Account No.</span><strong class="mono-figure">{{ chama.bank_account }}</strong></div>
+        <div><span class="text-chama-muted d-block">Monthly Target</span><strong class="mono-figure text-chama-green">KES {{ account.monthly_target|floatformat:2|intcomma }}</strong></div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

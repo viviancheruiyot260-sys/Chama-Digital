@@ -1,0 +1,277 @@
+{% extends 'dashboard_base.html' %}
+{% load humanize %}
+
+{% block title %}Chairperson Dashboard — Chama Digital{% endblock %}
+
+{% block dashboard_content %}
+<div class="d-flex flex-wrap justify-content-between align-items-center gap-3 pb-4 mb-4 border-bottom">
+  <div>
+    <div class="small text-chama-muted mb-1">Administrative Console &middot; Member Approvals, Loans &amp; Governance</div>
+    <h1 class="h3 fw-bold mb-0">Chairperson Console — {{ user.full_name }}</h1>
+  </div>
+  <div class="d-flex gap-2">
+    <a href="{% url 'announcements:create' %}" class="btn btn-chama-outline btn-chama-sm">Post Announcement</a>
+    <a href="#pendingApplications" class="btn btn-chama-primary btn-chama-sm">Review Applications</a>
+  </div>
+</div>
+
+<!-- 5 KPI Cards -->
+<div class="row g-3 mb-4">
+  <div class="col-sm-6 col-xl">
+    <article class="chama-card p-3 h-100">
+      <div class="small text-chama-muted mb-1">Total Member Applicants</div>
+      <div class="kpi-value">{{ total_members }}</div>
+    </article>
+  </div>
+  <div class="col-sm-6 col-xl">
+    <article class="chama-card p-3 h-100">
+      <div class="small text-chama-muted mb-1">Active Chama Accounts</div>
+      <div class="kpi-value text-chama-green">{{ active_members_count }}</div>
+    </article>
+  </div>
+  <div class="col-sm-6 col-xl">
+    <article class="chama-card p-3 h-100">
+      <div class="small text-chama-muted mb-1">Pending Applications</div>
+      <div class="kpi-value text-chama-gold">{{ pending_apps|length }}</div>
+    </article>
+  </div>
+  <div class="col-sm-6 col-xl">
+    <article class="chama-card p-3 h-100">
+      <div class="small text-chama-muted mb-1">Total Group Savings</div>
+      <div class="kpi-value">KES {{ total_group_savings|floatformat:2|intcomma }}</div>
+    </article>
+  </div>
+  <div class="col-sm-6 col-xl">
+    <article class="chama-card p-3 h-100">
+      <div class="small text-chama-muted mb-1">Outstanding Group Loans</div>
+      <div class="kpi-value text-chama-gold">KES {{ outstanding_loans|floatformat:2|intcomma }}</div>
+    </article>
+  </div>
+</div>
+
+<!-- Pending Member Applications -->
+<article class="chama-card mb-4 overflow-hidden" id="pendingApplications">
+  <div class="px-4 py-3 border-bottom d-flex flex-wrap justify-content-between align-items-center gap-2">
+    <div>
+      <h2 class="h6 fw-bold mb-0">Pending Member Applications</h2>
+      <span class="small text-chama-muted">Approving assigns a membership number and unlocks member dashboard access</span>
+    </div>
+    <span class="status-label status-pending">{{ pending_apps|length }} Pending</span>
+  </div>
+  <div class="table-responsive">
+    <table class="table table-hover table-chama align-middle">
+      <thead>
+        <tr>
+          <th>Applicant</th>
+          <th>Phone</th>
+          <th>National ID</th>
+          <th>Date Applied</th>
+          <th>Bio / Notes</th>
+          <th class="text-end">Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for app in pending_apps %}
+          <tr>
+            <td>
+              <div class="fw-semibold">{{ app.full_name }}</div>
+              <div class="small text-chama-muted">{{ app.email }}</div>
+            </td>
+            <td class="mono-figure">{{ app.phone_number }}</td>
+            <td class="mono-figure">{{ app.national_id|default:"—" }}</td>
+            <td class="mono-figure">{{ app.created_at|date:"d M Y" }}</td>
+            <td class="small text-chama-muted">{{ app.bio|truncatechars:60|default:"—" }}</td>
+            <td class="text-end text-nowrap">
+              <form method="post" action="{% url 'members:review_application' app.pk %}" class="d-inline">
+                {% csrf_token %}
+                <input type="hidden" name="decision" value="approve">
+                <button type="submit" class="btn btn-chama-primary btn-chama-sm">Approve</button>
+              </form>
+              <form method="post" action="{% url 'members:review_application' app.pk %}" class="d-inline">
+                {% csrf_token %}
+                <input type="hidden" name="decision" value="reject">
+                <button type="submit" class="btn btn-chama-outline btn-chama-sm">Reject</button>
+              </form>
+            </td>
+          </tr>
+        {% empty %}
+          <tr><td colspan="6" class="text-center py-4 text-chama-muted">No pending member applications right now.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</article>
+
+<!-- Approved & Rejected Members -->
+<div class="row g-4 mb-4">
+  <div class="col-lg-7">
+    <article class="chama-card h-100 overflow-hidden">
+      <div class="px-4 py-3 border-bottom d-flex justify-content-between align-items-center">
+        <h2 class="h6 fw-bold mb-0">Approved Active Members</h2>
+        <span class="status-label status-paid">{{ approved_members|length }} Active</span>
+      </div>
+      <div class="table-responsive">
+        <table class="table table-hover table-chama align-middle">
+          <thead>
+            <tr>
+              <th>Member</th>
+              <th>Member No.</th>
+              <th>Phone</th>
+              <th>Approved On</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for m in approved_members %}
+              <tr>
+                <td><a href="{% url 'members:public_profile' m.pk %}" class="text-decoration-none fw-semibold text-chama-ink">{{ m.full_name }}</a></td>
+                <td class="mono-figure">{{ m.member_number }}</td>
+                <td class="mono-figure">{{ m.phone_number }}</td>
+                <td class="mono-figure">{{ m.approved_at|date:"d M Y"|default:m.created_at|date:"d M Y" }}</td>
+              </tr>
+            {% empty %}
+              <tr><td colspan="4" class="text-center py-3 text-chama-muted">No approved members yet.</td></tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </article>
+  </div>
+
+  <div class="col-lg-5">
+    <article class="chama-card h-100 overflow-hidden">
+      <div class="px-4 py-3 border-bottom d-flex justify-content-between align-items-center">
+        <h2 class="h6 fw-bold mb-0">Rejected Applications</h2>
+        <span class="status-label status-overdue">{{ rejected_apps|length }} Rejected</span>
+      </div>
+      <ul class="list-group list-group-flush">
+        {% for r in rejected_apps %}
+          <li class="list-group-item px-4 py-3 d-flex justify-content-between align-items-center">
+            <div>
+              <div class="fw-semibold small">{{ r.full_name }}</div>
+              <div class="small text-chama-muted">{{ r.email }}</div>
+            </div>
+            <form method="post" action="{% url 'members:review_application' r.pk %}">
+              {% csrf_token %}
+              <input type="hidden" name="decision" value="approve">
+              <button type="submit" class="btn btn-chama-outline btn-chama-sm">Re-Approve</button>
+            </form>
+          </li>
+        {% empty %}
+          <li class="list-group-item px-4 py-3 small text-chama-muted">No rejected applications.</li>
+        {% endfor %}
+      </ul>
+    </article>
+  </div>
+</div>
+
+<!-- Loan Applications Review -->
+<article class="chama-card mb-4 overflow-hidden">
+  <div class="px-4 py-3 border-bottom">
+    <h2 class="h6 fw-bold mb-0">Group Loan Applications</h2>
+  </div>
+  <div class="table-responsive">
+    <table class="table table-hover table-chama align-middle">
+      <thead>
+        <tr>
+          <th>Member</th>
+          <th>Purpose</th>
+          <th>Period</th>
+          <th class="text-end">Requested</th>
+          <th class="text-end">3&times; Savings Limit</th>
+          <th>Status</th>
+          <th class="text-end">Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for la in loan_applications %}
+          <tr>
+            <td>{{ la.member.full_name }}</td>
+            <td>{{ la.purpose }}</td>
+            <td>{{ la.repayment_months }} mo</td>
+            <td class="text-end mono-figure">KES {{ la.requested_amount|floatformat:2|intcomma }}</td>
+            <td class="text-end mono-figure">
+              KES {{ la.eligibility_info.available_loan_limit|floatformat:2|intcomma }}
+              <div class="small text-chama-muted">Savings: KES {{ la.eligibility_info.total_savings|floatformat:0|intcomma }}</div>
+            </td>
+            <td><span class="status-label {% if la.status == 'APPROVED' %}status-paid{% elif la.status == 'PENDING' %}status-pending{% else %}status-overdue{% endif %}">{{ la.get_status_display }}</span></td>
+            <td class="text-end text-nowrap">
+              {% if la.status == 'PENDING' %}
+                <form method="post" action="{% url 'loans:review_application' la.pk %}" class="d-inline">
+                  {% csrf_token %}
+                  <input type="hidden" name="decision" value="approve">
+                  <button type="submit" class="btn btn-chama-primary btn-chama-sm">Approve Loan</button>
+                </form>
+                <form method="post" action="{% url 'loans:review_application' la.pk %}" class="d-inline">
+                  {% csrf_token %}
+                  <input type="hidden" name="decision" value="reject">
+                  <button type="submit" class="btn btn-chama-outline btn-chama-sm">Reject</button>
+                </form>
+              {% else %}
+                <span class="small text-chama-muted">Reviewed</span>
+              {% endif %}
+            </td>
+          </tr>
+        {% empty %}
+          <tr><td colspan="7" class="text-center py-3 text-chama-muted">No loan applications yet.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</article>
+
+<!-- Upcoming Meetings, Announcements & Recent Transactions -->
+<div class="row g-4">
+  <div class="col-lg-6">
+    <article class="chama-card h-100 overflow-hidden">
+      <div class="px-4 py-3 border-bottom d-flex justify-content-between align-items-center">
+        <h2 class="h6 fw-bold mb-0">Upcoming Meetings &amp; Announcements</h2>
+        <a href="{% url 'announcements:create' %}" class="small fw-semibold text-decoration-none text-chama-green">+ New Notice</a>
+      </div>
+      <ul class="list-group list-group-flush">
+        {% for m in upcoming_meetings %}
+          <li class="list-group-item px-4 py-3">
+            <div class="fw-semibold small">{{ m.title }}</div>
+            <div class="small text-chama-muted mono-figure">{{ m.event_date|date:"d M Y" }} &middot; {{ m.event_time }} &middot; {{ m.venue }}</div>
+          </li>
+        {% endfor %}
+        {% for ann in recent_announcements %}
+          <li class="list-group-item px-4 py-3">
+            <div class="fw-semibold small text-chama-green">[{{ ann.get_category_display }}] {{ ann.title }}</div>
+            <div class="small text-chama-muted">{{ ann.body|truncatechars:100 }}</div>
+          </li>
+        {% endfor %}
+      </ul>
+    </article>
+  </div>
+
+  <div class="col-lg-6">
+    <article class="chama-card h-100 overflow-hidden">
+      <div class="px-4 py-3 border-bottom">
+        <h2 class="h6 fw-bold mb-0">Recent Group Transactions</h2>
+      </div>
+      <div class="table-responsive">
+        <table class="table table-hover table-chama align-middle">
+          <thead>
+            <tr>
+              <th>Member</th>
+              <th>Method</th>
+              <th>Status</th>
+              <th class="text-end">Amount</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for tx in recent_transactions %}
+              <tr>
+                <td>{{ tx.member.full_name }}</td>
+                <td class="small">{{ tx.get_payment_method_display }}</td>
+                <td><span class="status-label {% if tx.status == 'SUCCESSFUL' %}status-paid{% elif tx.status == 'PENDING_VERIFICATION' %}status-pending{% else %}status-overdue{% endif %}">{{ tx.get_status_display }}</span></td>
+                <td class="text-end mono-figure">KES {{ tx.amount|floatformat:2|intcomma }}</td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </article>
+  </div>
+</div>
+{% endblock %}

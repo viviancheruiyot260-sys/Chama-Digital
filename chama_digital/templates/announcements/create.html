@@ -1,0 +1,27 @@
+{% extends 'dashboard_base.html' %}
+
+{% block title %}Create Announcement — Chama Digital{% endblock %}
+
+{% block dashboard_content %}
+<div class="d-flex justify-content-between align-items-center pb-4 mb-4 border-bottom">
+  <div>
+    <div class="small text-chama-muted mb-1">Chairperson &amp; Secretary Communications</div>
+    <h1 class="h3 fw-bold mb-0">Publish Group Announcement</h1>
+  </div>
+  <a href="{% url 'announcements:list' %}" class="btn btn-chama-outline btn-chama-sm">&larr; Back</a>
+</div>
+
+<div class="chama-card p-4 p-md-5" style="max-width: 720px;">
+  <form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    {% for field in form %}
+      <div class="mb-3">
+        <label class="form-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
+        {{ field }}
+        {% if field.errors %}<div class="text-danger small mt-1">{{ field.errors|striptags }}</div>{% endif %}
+      </div>
+    {% endfor %}
+    <button type="submit" class="btn btn-chama-primary">Publish Announcement</button>
+  </form>
+</div>
+{% endblock %}

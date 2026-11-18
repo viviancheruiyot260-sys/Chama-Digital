@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Register — Admin/Official &amp; Member Registration | Chama Digital</title>
+  <meta name="description" content="Register as a Chama Official (Chairperson, Treasurer, Secretary) or apply as a Member pending Chairperson approval.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@500;600&family=Plus+Jakarta+Sans:wght@600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/bootstrap.min.css">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <header class="sticky-top navbar-chama">
+    <nav class="navbar navbar-expand-lg py-2" aria-label="Primary navigation">
+      <div class="container">
+        <a class="navbar-brand navbar-brand-chama d-inline-flex align-items-center gap-2" href="index.html">
+          <svg width="30" height="30" viewBox="0 0 32 32" fill="none" aria-hidden="true">
+            <rect width="32" height="32" rx="8" fill="#14532D"/>
+            <circle cx="13.5" cy="16" r="6" stroke="#C59B27" stroke-width="2.5"/>
+            <circle cx="19.5" cy="16" r="6" stroke="#FFFFFF" stroke-width="2.5"/>
+          </svg>
+          <span>Chama Digital</span>
+        </a>
+
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNavbar" aria-controls="mainNavbar" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="mainNavbar">
+          <ul class="navbar-nav mx-auto mb-2 mb-lg-0 gap-lg-2">
+            <li class="nav-item"><a class="nav-link" href="index.html">Home</a></li>
+            <li class="nav-item"><a class="nav-link" href="index.html#about">About Us</a></li>
+            <li class="nav-item"><a class="nav-link" href="index.html#how-it-works">How It Works</a></li>
+            <li class="nav-item"><a class="nav-link" href="index.html#contact">Contact</a></li>
+            <li class="nav-item"><a class="nav-link" href="login.html">Login</a></li>
+          </ul>
+
+          <div class="d-flex align-items-center gap-2 pt-2 pt-lg-0" id="navAuthActions">
+            <a href="login.html" class="btn btn-link text-decoration-none fw-semibold text-chama-green px-3">Member Login</a>
+            <a href="register.html" class="btn btn-chama-primary btn-chama-sm">Join Our Chama</a>
+          </div>
+        </div>
+      </div>
+    </nav>
+  </header>
+
+  <main class="section-pad">
+    <div class="container">
+      <div class="row align-items-start g-5">
+        <div class="col-lg-5 pt-lg-3">
+          <span class="section-kicker">Two Registration Options</span>
+          <h1 class="section-title mb-3">Join Our Chama or Register as a Group Official</h1>
+          <p class="text-chama-muted fs-6 mb-4">
+            Select the registration option that matches your role in the table-banking group.
+          </p>
+
+          <div class="chama-card p-4 mb-3">
+            <div class="mono-figure small text-chama-gold fw-semibold mb-1">A. Member Registration</div>
+            <h2 class="h6 fw-bold mb-1">Apply to join an existing chama</h2>
+            <p class="small text-chama-muted mb-0">
+              Your account is created with <strong>PENDING APPROVAL</strong> status and routed to the Chairperson's dashboard. Full financial dashboard access unlocks once approved.
+            </p>
+          </div>
+
+          <div class="chama-card p-4">
+            <div class="mono-figure small text-chama-gold fw-semibold mb-1">B. Admin / Official Registration</div>
+            <h2 class="h6 fw-bold mb-1">Chairperson, Treasurer, or Secretary</h2>
+            <p class="small text-chama-muted mb-0">
+              Each official receives a dedicated role-based dashboard for approvals, financial accounts, loans, directories, and announcements.
+            </p>
+          </div>
+        </div>
+
+        <div class="col-lg-7">
+          <div class="chama-card p-4 p-md-5">
+            <div class="mb-4">
+              <h2 class="h4 fw-bold mb-1">Create an Account</h2>
+              <p class="small text-chama-muted mb-0">Switch between Member Registration and Admin / Official Registration below.</p>
+            </div>
+
+            <ul class="nav reg-path-tabs mb-4" id="regPathTab" role="tablist">
+              <li class="nav-item" role="presentation">
+                <button class="nav-link active w-100" id="member-reg-tab" data-bs-toggle="tab" data-bs-target="#member-reg-pane" type="button" role="tab" aria-controls="member-reg-pane" aria-selected="true">
+                  Member Registration
+                </button>
+              </li>
+              <li class="nav-item" role="presentation">
+                <button class="nav-link w-100" id="official-reg-tab" data-bs-toggle="tab" data-bs-target="#official-reg-pane" type="button" role="tab" aria-controls="official-reg-pane" aria-selected="false">
+                  Admin / Official Registration
+                </button>
+              </li>
+            </ul>
+
+            <div class="tab-content" id="regPathTabContent">
+              <!-- Member Registration -->
+              <div class="tab-pane fade show active" id="member-reg-pane" role="tabpanel" aria-labelledby="member-reg-tab" tabindex="0">
+                <div class="approval-notice mb-4 small">
+                  <strong>Chairperson Approval System:</strong> New members start in Pending Approval status and must be approved by the Chairperson before accessing the full member dashboard.
+                </div>
+
+                <div id="memberRegAlert" class="d-none" role="alert"></div>
+
+                <form id="memberRegisterForm">
+                  <div class="mb-3">
+                    <label class="form-label" for="member-fullname">Full Name</label>
+                    <input class="form-control" type="text" id="member-fullname" placeholder="e.g. Faith Njeri Kamau" required>
+                  </div>
+
+                  <div class="row g-3 mb-3">
+                    <div class="col-sm-6">
+                      <label class="form-label" for="member-email">Email Address</label>
+                      <input class="form-control" type="email" id="member-email" placeholder="faith@example.co.ke" required>
+                    </div>
+                    <div class="col-sm-6">
+                      <label class="form-label" for="member-phone">Phone Number</label>
+                      <input class="form-control" type="tel" id="member-phone" placeholder="+254 712 345 678" required>
+                    </div>
+                  </div>
+
+                  <div class="row g-3 mb-3">
+                    <div class="col-sm-6">
+                      <label class="form-label" for="member-id-number">National ID Number</label>
+                      <input class="form-control mono-figure" type="text" id="member-id-number" placeholder="e.g. 29481022" required>
+                    </div>
+                    <div class="col-sm-6">
+                      <label class="form-label" for="member-chama-code">Chama Invitation Code (Optional)</label>
+                      <input class="form-control mono-figure" type="text" id="member-chama-code" placeholder="e.g. UMJ-2026" value="UMJ-2026">
+                    </div>
+                  </div>
+
+                  <div class="row g-3 mb-4">
+                    <div class="col-sm-6">
+                      <label class="form-label" for="member-password">Password</label>
+                      <input class="form-control" type="password" id="member-password" placeholder="Min. 6 characters" required>
+                    </div>
+                    <div class="col-sm-6">
+                      <label class="form-label" for="member-confirm">Confirm Password</label>
+                      <input class="form-control" type="password" id="member-confirm" placeholder="Re-enter password" required>
+                    </div>
+                  </div>
+
+                  <button type="submit" class="btn btn-chama-primary w-100">Submit Member Registration</button>
+                </form>
+              </div>
+
+              <!-- Admin / Official Registration -->
+              <div class="tab-pane fade" id="official-reg-pane" role="tabpanel" aria-labelledby="official-reg-tab" tabindex="0">
+                <div id="officialRegAlert" class="d-none" role="alert"></div>
+
+                <form id="officialRegisterForm">
+                  <div class="mb-3">
+                    <label class="form-label" for="official-fullname">Full Name</label>
+                    <input class="form-control" type="text" id="official-fullname" placeholder="e.g. Samuel Kamau" required>
+                  </div>
+
+                  <div class="row g-3 mb-3">
+                    <div class="col-sm-6">
+                      <label class="form-label" for="official-email">Email Address</label>
+                      <input class="form-control" type="email" id="official-email" placeholder="official@chamadigital.co.ke" required>
+                    </div>
+                    <div class="col-sm-6">
+                      <label class="form-label" for="official-phone">Phone Number</label>
+                      <input class="form-control" type="tel" id="official-phone" placeholder="+254 711 223 344" required>
+                    </div>
+                  </div>
+
+                  <div class="row g-3 mb-3">
+                    <div class="col-sm-7">
+                      <label class="form-label" for="official-chama-name">Chama / Group Name</label>
+                      <input class="form-control" type="text" id="official-chama-name" placeholder="e.g. Umoja Table Banking Chama" value="Umoja Table Banking Chama" required>
+                    </div>
+                    <div class="col-sm-5">
+                      <label class="form-label" for="official-role">Official Position</label>
+                      <select class="form-select" id="official-role" required>
+                        <option value="CHAIRPERSON">Chairperson</option>
+                        <option value="TREASURER">Treasurer</option>
+                        <option value="SECRETARY">Secretary</option>
+                      </select>
+                    </div>
+                  </div>
+
+                  <div class="row g-3 mb-4">
+                    <div class="col-sm-6">
+                      <label class="form-label" for="official-password">Password</label>
+                      <input class="form-control" type="password" id="official-password" placeholder="Min. 6 characters" required>
+                    </div>
+                    <div class="col-sm-6">
+                      <label class="form-label" for="official-confirm">Confirm Password</label>
+                      <input class="form-control" type="password" id="official-confirm" placeholder="Re-enter password" required>
+                    </div>
+                  </div>
+
+                  <button type="submit" class="btn btn-chama-gold w-100">Create Official Account</button>
+                </form>
+              </div>
+            </div>
+
+            <div class="mt-4 pt-3 border-top text-center small text-chama-muted">
+              Already registered?
+              <a href="login.html" class="fw-semibold text-decoration-none text-chama-green">Login here</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <footer class="site-footer py-4">
+    <div class="container d-flex flex-wrap justify-content-between gap-2 small opacity-75">
+      <span>&copy; 2026 Chama Digital. Frontend prototype using localStorage.</span>
+      <span>Ready for future Django backend integration.</span>
+    </div>
+  </footer>
+
+  <script src="js/bootstrap.bundle.min.js"></script>
+  <script src="js/store.js"></script>
+  <script src="js/app.js"></script>
+  <script src="js/auth.js"></script>
+</body>
+</html>

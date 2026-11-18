@@ -1,0 +1,15 @@
+node_modules/
+build/
+dist/
+coverage/
+.DS_Store
+*.log
+.env*
+!.env.example
+__pycache__/
+*.pyc
+*.sqlite3
+chama_digital/staticfiles/
+chama_digital/media/profile_photos/*
+chama_digital/media/payment_proofs/*
+chama_digital/media/announcements/*

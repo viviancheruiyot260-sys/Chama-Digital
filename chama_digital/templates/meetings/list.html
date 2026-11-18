@@ -1,0 +1,70 @@
+{% extends 'dashboard_base.html' %}
+
+{% block title %}Meetings &amp; Important Occasions — Chama Digital{% endblock %}
+
+{% block dashboard_content %}
+<div class="d-flex flex-wrap justify-content-between align-items-center gap-3 pb-4 mb-4 border-bottom">
+  <div>
+    <div class="small text-chama-muted mb-1">Chama Calendar &amp; Milestones</div>
+    <h1 class="h3 fw-bold mb-0">Meetings &amp; Important Occasions</h1>
+  </div>
+  {% if is_secretary %}
+    <a href="{% url 'meetings:secretary_dashboard' %}" class="btn btn-chama-primary btn-chama-sm">Manage Schedule</a>
+  {% endif %}
+</div>
+
+{% if next_meeting %}
+  <div class="chama-card p-4 mb-4" style="background-color: var(--chama-green-soft);">
+    <div class="small fw-semibold text-chama-green mb-1">Next Scheduled Chama Meeting</div>
+    <h2 class="h4 fw-bold mb-1">{{ next_meeting.title }}</h2>
+    <div class="mono-figure small mb-2">{{ next_meeting.event_date|date:"l, d M Y" }} &middot; {{ next_meeting.event_time }} &middot; {{ next_meeting.venue }}</div>
+    {% if next_meeting.agenda %}
+      <div class="small text-chama-ink mb-2" style="white-space: pre-line;"><strong>Agenda:</strong><br>{{ next_meeting.agenda }}</div>
+    {% endif %}
+    <div class="small text-chama-muted">{{ next_meeting.description }} &middot; Organizer: {{ next_meeting.organizer.full_name|default:"Secretary" }}</div>
+  </div>
+{% endif %}
+
+<div class="row g-4">
+  <div class="col-lg-8">
+    <article class="chama-card overflow-hidden">
+      <div class="px-4 py-3 border-bottom">
+        <h2 class="h6 fw-bold mb-0">Upcoming Meetings &amp; Group Occasions</h2>
+      </div>
+      <ul class="list-group list-group-flush">
+        {% for ev in upcoming_events %}
+          <li class="list-group-item px-4 py-3">
+            <div class="d-flex justify-content-between align-items-start gap-2 mb-1">
+              <strong class="small">{{ ev.title }}</strong>
+              <span class="status-label {% if ev.is_meeting %}status-paid{% else %}status-pending{% endif %}">{{ ev.get_event_type_display }}</span>
+            </div>
+            <div class="small text-chama-muted mono-figure mb-1">{{ ev.event_date|date:"d M Y" }} &middot; {{ ev.event_time }} &middot; {{ ev.venue }}</div>
+            <div class="small text-chama-muted">{{ ev.description|default:ev.agenda }}</div>
+          </li>
+        {% empty %}
+          <li class="list-group-item px-4 py-3 small text-chama-muted">No upcoming events scheduled.</li>
+        {% endfor %}
+      </ul>
+    </article>
+  </div>
+
+  <div class="col-lg-4">
+    <article class="chama-card overflow-hidden">
+      <div class="px-4 py-3 border-bottom">
+        <h2 class="h6 fw-bold mb-0">Past Meetings &amp; Minutes</h2>
+      </div>
+      <ul class="list-group list-group-flush">
+        {% for p in past_events %}
+          <li class="list-group-item px-4 py-3">
+            <div class="fw-semibold small">{{ p.title }}</div>
+            <div class="small text-chama-muted mono-figure">{{ p.event_date|date:"d M Y" }}</div>
+            <div class="small text-chama-muted mt-1">{{ p.minutes_summary|default:"Minutes recorded in chama ledger." }}</div>
+          </li>
+        {% empty %}
+          <li class="list-group-item px-4 py-3 small text-chama-muted">No past meetings recorded yet.</li>
+        {% endfor %}
+      </ul>
+    </article>
+  </div>
+</div>
+{% endblock %}

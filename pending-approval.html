@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pending Chairperson Approval — Chama Digital</title>
+  <meta name="description" content="New members wait for Chairperson approval before accessing the full Chama Digital financial dashboard.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@500;600&family=Plus+Jakarta+Sans:wght@600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/bootstrap.min.css">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <header class="sticky-top navbar-chama">
+    <nav class="navbar navbar-expand-lg py-2" aria-label="Primary navigation">
+      <div class="container">
+        <a class="navbar-brand navbar-brand-chama d-inline-flex align-items-center gap-2" href="index.html">
+          <svg width="30" height="30" viewBox="0 0 32 32" fill="none" aria-hidden="true">
+            <rect width="32" height="32" rx="8" fill="#14532D"/>
+            <circle cx="13.5" cy="16" r="6" stroke="#C59B27" stroke-width="2.5"/>
+            <circle cx="19.5" cy="16" r="6" stroke="#FFFFFF" stroke-width="2.5"/>
+          </svg>
+          <span>Chama Digital</span>
+        </a>
+
+        <div class="d-flex align-items-center gap-2 ms-auto" id="navAuthActions">
+          <a href="login.html" class="btn btn-chama-outline btn-chama-sm">Back to Login</a>
+        </div>
+      </div>
+    </nav>
+  </header>
+
+  <main class="section-pad" id="pendingApprovalPage">
+    <div class="container">
+      <div class="row justify-content-center">
+        <div class="col-lg-8">
+          <div class="chama-card p-4 p-md-5">
+            <div class="d-flex flex-wrap justify-content-between align-items-start gap-3 pb-4 mb-4 border-bottom">
+              <div>
+                <span class="section-kicker">Membership Verification</span>
+                <h1 class="h3 fw-bold mb-1" id="pendingStatusHeading">Pending Chairperson Approval</h1>
+                <p class="small text-chama-muted mb-0" id="pendingChamaMeta">
+                  Umoja Table Banking Chama &middot; Invite Code UMJ-2026
+                </p>
+              </div>
+              <span class="status-label status-pending" id="pendingStatusBadge">Status: PENDING APPROVAL</span>
+            </div>
+
+            <div class="approval-notice mb-4">
+              <p class="mb-0 fw-semibold text-chama-ink" id="pendingStatusMessage">
+                Your registration has been received. Please wait for the chairperson to approve your membership.
+              </p>
+            </div>
+
+            <div class="row g-3 mb-4">
+              <div class="col-md-6">
+                <div class="p-3 rounded-3 border bg-light h-100">
+                  <div class="small fw-bold mb-2">Locked Until Chairperson Approves</div>
+                  <ul class="list-unstyled small text-chama-muted d-grid gap-2 mb-0">
+                    <li>&ndash; Personal savings &amp; contributions dashboard</li>
+                    <li>&ndash; M-Pesa STK Push &amp; month selection payments</li>
+                    <li>&ndash; Loan applications &amp; repayment tracking</li>
+                    <li>&ndash; Group payment receipts &amp; profile portal</li>
+                  </ul>
+                </div>
+              </div>
+
+              <div class="col-md-6">
+                <div class="p-3 rounded-3 border bg-light h-100">
+                  <div class="small fw-bold mb-2">How to Test Approval in This Prototype</div>
+                  <p class="small text-chama-muted mb-2">
+                    Applicant: <strong id="pendingApplicantName">New Member</strong> (<span class="mono-figure" id="pendingApplicantPhone">+254...</span>)
+                  </p>
+                  <p class="small text-chama-muted mb-0">
+                    Sign in as the <strong>Chairperson</strong> on the login screen to approve or reject this application in real time.
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <div class="d-flex flex-wrap gap-3 pt-3 border-top">
+              <a href="login.html" class="btn btn-chama-primary btn-chama-sm">Sign In as Chairperson to Review</a>
+              <a href="index.html" class="btn btn-chama-outline btn-chama-sm">Return to Homepage</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <footer class="site-footer py-4">
+    <div class="container d-flex flex-wrap justify-content-between gap-2 small opacity-75">
+      <span>&copy; 2026 Chama Digital.</span>
+      <span>Role-based approval state prototype.</span>
+    </div>
+  </footer>
+
+  <script src="js/bootstrap.bundle.min.js"></script>
+  <script src="js/store.js"></script>
+  <script src="js/app.js"></script>
+  <script src="js/dashboards.js"></script>
+</body>
+</html>

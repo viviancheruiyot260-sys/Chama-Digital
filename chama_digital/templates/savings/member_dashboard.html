@@ -1,0 +1,201 @@
+{% extends 'dashboard_base.html' %}
+{% load humanize %}
+
+{% block title %}Member Dashboard — Chama Digital{% endblock %}
+
+{% block dashboard_content %}
+<div class="d-flex flex-wrap justify-content-between align-items-center gap-3 pb-4 mb-4 border-bottom">
+  <div>
+    <div class="small text-chama-muted mb-1">Personal Financial Account &middot; Approved Member ({{ user.member_number }})</div>
+    <h1 class="h3 fw-bold mb-0">Welcome back, {{ user.full_name }}</h1>
+  </div>
+  <div class="d-flex flex-wrap gap-2">
+    <a href="{% url 'payments:payment_history' %}" class="btn btn-chama-outline btn-chama-sm">All Receipts</a>
+    <a href="{% url 'payments:make_payment' %}" class="btn btn-chama-primary btn-chama-sm">Make a Payment</a>
+  </div>
+</div>
+
+<!-- 6 Financial Summary Cards (DB-calculated) -->
+<div class="row g-3 mb-4">
+  <div class="col-sm-6 col-lg-4">
+    <article class="chama-card p-3 h-100">
+      <div class="small text-chama-muted mb-1">Total Accumulated Savings</div>
+      <div class="kpi-value text-chama-green">KES {{ total_savings|floatformat:2|intcomma }}</div>
+      <div class="small text-chama-muted mt-1">{{ total_contributions }} verified contribution(s)</div>
+    </article>
+  </div>
+  <div class="col-sm-6 col-lg-4">
+    <article class="chama-card p-3 h-100">
+      <div class="small text-chama-muted mb-1">Outstanding Loan Balance</div>
+      <div class="kpi-value text-chama-gold">KES {{ outstanding_loan_balance|floatformat:2|intcomma }}</div>
+      <div class="small text-chama-muted mt-1"><a href="{% url 'loans:member_loans' %}" class="text-decoration-none text-chama-green">View loans &rarr;</a></div>
+    </article>
+  </div>
+  <div class="col-sm-6 col-lg-4">
+    <article class="chama-card p-3 h-100">
+      <div class="small text-chama-muted mb-1">Total Amount Borrowed</div>
+      <div class="kpi-value">KES {{ total_borrowed|floatformat:2|intcomma }}</div>
+    </article>
+  </div>
+  <div class="col-sm-6 col-lg-4">
+    <article class="chama-card p-3 h-100">
+      <div class="small text-chama-muted mb-1">Total Loan Repayments</div>
+      <div class="kpi-value">KES {{ total_repaid|floatformat:2|intcomma }}</div>
+    </article>
+  </div>
+  <div class="col-sm-6 col-lg-4">
+    <article class="chama-card p-3 h-100">
+      <div class="small text-chama-muted mb-1">Next Monthly Contribution Date</div>
+      <div class="kpi-value">{{ chama.next_contribution_date|date:"d M Y" }}</div>
+      <div class="small text-chama-muted mt-1">Target: KES {{ account.monthly_target|floatformat:0|intcomma }}</div>
+    </article>
+  </div>
+  <div class="col-sm-6 col-lg-4">
+    <article class="chama-card p-3 h-100">
+      <div class="small text-chama-muted mb-1">November 2026 Status</div>
+      {% if nov_paid %}
+        <div class="kpi-value text-chama-green">Paid</div>
+        <div class="small text-chama-muted mt-1">KES {{ nov_total|floatformat:2|intcomma }} confirmed</div>
+      {% else %}
+        <div class="kpi-value text-chama-gold">Due</div>
+        <div class="small text-chama-muted mt-1"><a href="{% url 'payments:make_payment' %}" class="text-decoration-none text-chama-green">Pay via M-Pesa or Bank &rarr;</a></div>
+      {% endif %}
+    </article>
+  </div>
+</div>
+
+<!-- Savings-Based Loan Eligibility Banner -->
+<article class="chama-card p-4 mb-4">
+  <div class="row align-items-center g-3">
+    <div class="col-lg-7">
+      <div class="d-flex flex-wrap align-items-center gap-2 mb-1">
+        <span class="small text-chama-muted">Loan Eligibility (Based on Verified Savings)</span>
+        <span class="status-label {{ loan_eligibility.status_css_class }}">&middot; {{ loan_eligibility.status_label }}</span>
+      </div>
+      <div class="small text-chama-muted mb-0">{{ loan_eligibility.reason }}</div>
+    </div>
+    <div class="col-sm-6 col-lg-3">
+      <div class="small text-chama-muted">Available Limit ({{ loan_eligibility.multiplier }}&times; Savings Cap: KES {{ loan_eligibility.max_loan_limit|floatformat:0|intcomma }})</div>
+      <div class="kpi-value {% if loan_eligibility.is_eligible %}text-chama-green{% else %}text-chama-gold{% endif %}">
+        KES {{ loan_eligibility.remaining_apply_capacity|floatformat:2|intcomma }}
+      </div>
+    </div>
+    <div class="col-sm-6 col-lg-2 text-lg-end">
+      {% if loan_eligibility.is_eligible %}
+        <a href="{% url 'loans:member_loans' %}" class="btn btn-chama-primary btn-chama-sm">Apply for Loan</a>
+      {% else %}
+        <a href="{% url 'loans:member_loans' %}" class="btn btn-chama-outline btn-chama-sm">Check Details</a>
+      {% endif %}
+    </div>
+  </div>
+</article>
+
+<!-- Recent Transactions -->
+<article class="chama-card mb-4 overflow-hidden">
+  <div class="px-4 py-3 border-bottom d-flex justify-content-between align-items-center">
+    <h2 class="h6 fw-bold mb-0">Recent Financial Transactions</h2>
+    <a href="{% url 'payments:payment_history' %}" class="small fw-semibold text-decoration-none text-chama-green">Full History &rarr;</a>
+  </div>
+  <div class="table-responsive">
+    <table class="table table-hover table-chama align-middle">
+      <thead>
+        <tr>
+          <th>Date</th>
+          <th>Month</th>
+          <th>Method</th>
+          <th>Reference</th>
+          <th>Status</th>
+          <th class="text-end">Amount</th>
+          <th class="text-end">Receipt</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for tx in recent_transactions %}
+          <tr>
+            <td class="mono-figure">{{ tx.created_at|date:"d M Y" }}</td>
+            <td>{{ tx.contribution_month_label }}</td>
+            <td>{{ tx.get_payment_method_display }}</td>
+            <td class="mono-figure">{{ tx.external_reference }}</td>
+            <td>
+              {% if tx.status == 'SUCCESSFUL' %}
+                <span class="status-label status-paid">{{ tx.get_status_display }}</span>
+              {% elif tx.status == 'PENDING_VERIFICATION' %}
+                <span class="status-label status-pending">{{ tx.get_status_display }}</span>
+              {% else %}
+                <span class="status-label status-overdue">{{ tx.get_status_display }}</span>
+              {% endif %}
+            </td>
+            <td class="text-end mono-figure">KES {{ tx.amount|floatformat:2|intcomma }}</td>
+            <td class="text-end">
+              {% if tx.receipt %}
+                <a href="{% url 'payments:receipt_detail' tx.receipt.pk %}" class="small fw-semibold text-decoration-none text-chama-green">View Receipt</a>
+              {% else %}
+                <span class="small text-chama-muted">—</span>
+              {% endif %}
+            </td>
+          </tr>
+        {% empty %}
+          <tr><td colspan="7" class="text-center py-4 text-chama-muted">No transactions recorded yet.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</article>
+
+<!-- Next Meeting, Occasions & Announcements -->
+<div class="row g-4">
+  <div class="col-lg-6">
+    <article class="chama-card h-100 overflow-hidden">
+      <div class="px-4 py-3 border-bottom d-flex justify-content-between align-items-center">
+        <h2 class="h6 fw-bold mb-0">Next Meeting &amp; Important Occasions</h2>
+        <a href="{% url 'meetings:list' %}" class="small fw-semibold text-decoration-none text-chama-green">All Events &rarr;</a>
+      </div>
+      {% if next_meeting %}
+        <div class="p-4 border-bottom" style="background-color: var(--chama-green-soft);">
+          <div class="small fw-semibold text-chama-green mb-1">Next Group Meeting</div>
+          <div class="fw-bold mb-1">{{ next_meeting.title }}</div>
+          <div class="small text-chama-ink mono-figure mb-1">{{ next_meeting.event_date|date:"d M Y" }} &middot; {{ next_meeting.event_time }} &middot; {{ next_meeting.venue }}</div>
+          <div class="small text-chama-muted">{{ next_meeting.description|default:next_meeting.agenda }}</div>
+        </div>
+      {% endif %}
+      <ul class="list-group list-group-flush">
+        {% for ev in upcoming_events %}
+          <li class="list-group-item px-4 py-3 d-flex justify-content-between align-items-start gap-2">
+            <div>
+              <div class="fw-semibold small">{{ ev.title }}</div>
+              <div class="small text-chama-muted mono-figure">{{ ev.event_date|date:"d M Y" }} &middot; {{ ev.event_time }}</div>
+              <div class="small text-chama-muted">{{ ev.venue }}</div>
+            </div>
+            <span class="status-label {% if ev.is_meeting %}status-paid{% else %}status-pending{% endif %}">{{ ev.get_event_type_display }}</span>
+          </li>
+        {% empty %}
+          <li class="list-group-item px-4 py-3 small text-chama-muted">No upcoming meetings or occasions scheduled.</li>
+        {% endfor %}
+      </ul>
+    </article>
+  </div>
+
+  <div class="col-lg-6">
+    <article class="chama-card h-100 overflow-hidden">
+      <div class="px-4 py-3 border-bottom d-flex justify-content-between align-items-center">
+        <h2 class="h6 fw-bold mb-0">Group Announcements</h2>
+        <a href="{% url 'announcements:list' %}" class="small fw-semibold text-decoration-none text-chama-green">View All &rarr;</a>
+      </div>
+      <ul class="list-group list-group-flush">
+        {% for ann in recent_announcements %}
+          <li class="list-group-item px-4 py-3">
+            <div class="d-flex justify-content-between gap-2 mb-1">
+              <a href="{% url 'announcements:detail' ann.pk %}" class="fw-semibold small text-decoration-none text-chama-ink">{{ ann.title }}</a>
+              <span class="mono-figure small text-chama-muted">{{ ann.created_at|date:"d M Y" }}</span>
+            </div>
+            <div class="small text-chama-muted mb-1">{{ ann.body|truncatechars:140 }}</div>
+            <div class="small text-chama-green">{{ ann.get_category_display }} &middot; {{ ann.author.full_name|default:"Official" }}</div>
+          </li>
+        {% empty %}
+          <li class="list-group-item px-4 py-3 small text-chama-muted">No announcements posted yet.</li>
+        {% endfor %}
+      </ul>
+    </article>
+  </div>
+</div>
+{% endblock %}
